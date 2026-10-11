@@ -60,7 +60,7 @@ function Workspace({ session }: { session: SessionData }) {
   const transport = useMemo(() => new DefaultChatTransport({ api: "/api/agent", body: { sessionId: session.id } }), [session.id]);
   const { messages, sendMessage, status, stop } = useChat({
     id: session.id,
-    messages: session.messages as UIMessage[],
+    messages: JSON.parse(session.messagesJson) as UIMessage[],
     transport,
     onError: (e) => toast.error(e.message || "The agent hit an error."),
     onFinish: () => qc.invalidateQueries({ queryKey: ["session", session.id] }),

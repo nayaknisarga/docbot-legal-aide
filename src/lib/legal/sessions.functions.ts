@@ -37,7 +37,7 @@ export const getSession = createServerFn({ method: "GET" })
       templateId: d.session.template_id,
       status: d.session.status,
       answers: d.answers as Record<string, string | number | boolean | string[]>,
-      messages: JSON.parse(JSON.stringify(d.session.messages ?? [])) as unknown[],
+      messagesJson: JSON.stringify(d.session.messages ?? []),
       clauses: d.clauses.map((c) => ({ id: c.id, title: c.title, body: c.body, status: c.status as "proposed" | "approved" | "rejected", source: c.source as "agent" | "library", warnings: (c.warnings ?? []) as string[], requirement: c.requirement })),
       drafts: d.drafts.map((x) => ({ version: x.version, createdAt: x.created_at })),
     };
