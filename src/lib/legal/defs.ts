@@ -162,7 +162,7 @@ function fmt(q: Question, v: AnswerValue) {
 
 export interface ClauseForRender { id: string; title: string; body: string; status: "proposed" | "approved" | "rejected" }
 
-export type Segment = { kind: "text"; text: string } | { kind: "missing"; token: string; label: string } | { kind: "value"; text: string };
+export type Segment = { kind: "text"; text: string } | { kind: "missing"; token: string; label: string } | { kind: "value"; text: string; fieldId: string };
 
 /**
  * Renders the template into segments so the preview can highlight what's filled and what's missing.
@@ -186,7 +186,7 @@ export function renderSegments(doc: DocType, answers: Answers): Segment[] {
     const token = m[1]!;
     const q = byToken.get(token);
     const v = q && visibleIds.has(q.fieldId) ? answers[q.fieldId] : undefined;
-    if (q && !isEmpty(v)) out.push({ kind: "value", text: fmt(q, v!) });
+    if (q && !isEmpty(v)) out.push({ kind: "value", text: fmt(q, v!), fieldId: q.fieldId });
     else out.push({ kind: "missing", token, label: q?.label ?? token.replace(/_/g, " ") });
     last = (m.index ?? 0) + m[0].length;
   }
