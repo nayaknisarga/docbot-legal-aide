@@ -50,7 +50,7 @@ function Index() {
               )) : <li className="text-sm text-muted-foreground">No direct match — try the assistant.</li>}
             </ul>
           )}
-          <Button variant="outline" className="mt-4 w-full" onClick={() => navigate({ to: "/assistant", search: { q: q || undefined } })}>
+          <Button variant="outline" className="mt-4 w-full" onClick={() => navigate({ to: "/assistant", search: q ? { q } : {} })}>
             <MessageSquareText className="h-4 w-4" /> Describe it to the assistant
           </Button>
         </div>
