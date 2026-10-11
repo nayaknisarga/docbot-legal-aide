@@ -1,19 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getDocType, renderDraft, type Answers } from "@/lib/legal/defs";
-import { coerceAnswer } from "@/lib/legal/defs";
+import { getDocType, questionsFor, renderDraft, type Answers } from "@/lib/legal/defs";
 
 const common: Answers = {
   jurisdiction: "India", effective_date: "2026-11-01",
   party_a_name: "Acme Pvt Ltd", party_a_address: "Bengaluru", party_a_signatory: "A. Rao, CEO",
   party_b_name: "Sam Dev", party_b_address: "Mysuru", party_b_signatory: "Sam Dev",
 };
-const q = (id: string) => (questions(id).find(x => x.fieldId === id));
-function questions(id: string): any[] {
-  const d = getDocType(id)!;
-  return defsQuestions(d);
-}
-import { questionsFor } from "@/lib/legal/defs";
-const defsQuestions = questionsFor;
 
 const perTemplate: Record<string, Answers> = {
   "nda-mutual": { purpose: "Pilot project", term_years: 2, survival_years: 3 },
@@ -23,12 +15,12 @@ const perTemplate: Record<string, Answers> = {
   "terms-of-service": { company_name: "Acme", website_url: "https://acme.com", service_description: "SaaS", has_accounts: true, has_payments: true, refund_policy: "7 days", collects_personal_data: true, contact_email: "legal@acme.com" },
 };
 
-describe("new template bodies", () => {
+describe("template bodies", () => {
   it.each(Object.keys(perTemplate))("renders %s with no leftover placeholders", (id) => {
     const d = getDocType(id)!;
-    if (id === "non-compete") { perTemplate[id] = { ...common, ...perTemplate[id], jurisdiction: "US - Delaware" }; }
-    else { perTemplate[id] = { ...common, ...perTemplate[id] }; }
-    const out = renderDraft(d, perTemplate[id], []);
+    const answers = { ...common, ...perTemplate[id] };
+    if (id === "non-compete") answers.jurisdiction = "US - Delaware"; // IN non-compete is unsupported
+    const out = renderDraft(d, answers, []);
     expect(out.leftovers).toEqual([]);
     expect(out.text.length).toBeGreaterThan(400);
   });
