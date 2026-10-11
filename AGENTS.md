@@ -10,4 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Legal platform domain logic lives in `src/lib/legal/` (catalog, questionnaire validation, rendering, discovery) as pure, tested functions; AI is only an assistant layer whose output is sanitized against the catalog — keeps state deterministic per the PRD.
-- AI calls run only in server functions (`*.functions.ts`) with a keyword fallback — secrets stay server-side and the app works if AI fails.
+- AI calls run only server-side (server functions or `src/routes/api/agent.ts`); agent tools are bound to the session server-side and can only propose clauses — approval is a separate user-only server function.
