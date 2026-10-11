@@ -19,7 +19,7 @@ describe("template bodies", () => {
   it.each(Object.keys(perTemplate))("renders %s with no leftover placeholders", (id) => {
     const d = getDocType(id)!;
     const answers = { ...common, ...perTemplate[id] };
-    if (id === "non-compete") answers.jurisdiction = "US - Delaware"; // IN non-compete is unsupported
+    if (id === "non-compete") answers["jurisdiction"] = "US - Delaware"; // IN non-compete is unsupported
     const out = renderDraft(d, answers, []);
     expect(out.leftovers).toEqual([]);
     expect(out.text.length).toBeGreaterThan(400);
