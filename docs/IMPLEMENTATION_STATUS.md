@@ -1,16 +1,15 @@
 # Implementation status
 
-## Slice 1 (done)
-- Discovery: 12-category expandable taxonomy, keyword search (`src/lib/legal/discovery.ts`).
-- Assistant (`/assistant`): server-side AI call (Lovable AI Gateway, `LOVABLE_API_KEY`), strict JSON schema, max 3 catalog-only recommendations, clarifying question, out-of-scope escalation, deterministic keyword fallback when AI fails.
-- Questionnaire (`/documents/$slug`): schema-driven common/specific/conditional fields, deterministic field + cross-field validation, jurisdiction support checks, answer reuse (profile in browser).
-- Generation: deterministic template rendering, versions saved, DOCX export, PDF via print. All templates are DEMO and labelled "not reviewed by a lawyer".
+## Done
+- Catalogue: `src/lib/legal/template_definitions.json` (your file) drives the grid, questions, and preview. Demo template bodies live in `template-bodies.ts` because the referenced placeholder `.md` files were not supplied.
+- Template grid (`/`): grouped by category, search, All / Your documents tabs.
+- Split workspace (`/d/$sessionId`): AI agent chat (left) and live preview (right) with a pinned draft-only disclaimer, DOCX/PDF export, jurisdiction guard (unsupported + warnings).
+- Agent (`src/routes/api/agent.ts` -> `src/lib/legal/agent.server.ts`): tool loop with recommend_documents, get_next_question, save_answer, validate_answers, search_clauses, propose_clause, fill_template, check_consistency. All tools read/write the database; session id is bound server-side, not chosen by the model.
+- Clauses stay `proposed` until the user clicks Approve (`decideClause` is the only approval path). Only approved clauses reach exports.
+- AI clause drafts use a fixed JSON schema, are re-validated, retried once, then fall back to "no clause". Chat messages are shape-validated before saving.
 - Tests: `src/test/legal.test.ts`.
 
 ## Not yet built
-- Accounts, organizations, roles, server-side tenant isolation (drafts currently live in browser storage only).
-- Database tables per spec section 4 (requires enabling Lovable Cloud).
-- Template upload (DOCX/PDF), AI analysis, admin approval workflow.
-- Clause library, "+ Add clause", AI clause proposals, before/after diff, approval/apply flow.
-- Legal source registry and citation retrieval.
-- Rich editor and audit log.
+- User accounts and organizations. Sessions are currently addressed by an unguessable link stored in the browser.
+- Template upload + admin approval, legal source registry, audit log, AI usage quotas.
+- Terms / Privacy / Disclaimer pages (need lawyer review).

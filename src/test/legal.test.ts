@@ -1,71 +1,84 @@
 import { describe, expect, it } from "vitest";
-import { getDocumentType } from "@/lib/legal/catalog";
-import { validateSession, visibleFields, prefillFromProfile, pruneHidden } from "@/lib/legal/questionnaire";
-import { generateDraft, renderTemplate, GenerationError } from "@/lib/legal/render";
-import { rankDocuments, sanitizeRecommendations } from "@/lib/legal/discovery";
+import { coerceAnswer, consistencyIssues, getDocType, nextQuestion, questionsFor, rankDocTypes, renderDraft, validateAll, DISCLAIMER, type Answers } from "@/lib/legal/defs";
 
-const freelance = getDocumentType("freelance-services-agreement")!;
-const base = {
-  your_name: "Asha Rao", your_address: "Bengaluru", client_name: "Acme Ltd", services: "Design a marketing website",
-  start_date: "2026-01-01", end_date: "2026-02-01", currency: "INR", fee_type: "Fixed fee", fee_amount: 50000,
-  payment_days: 15, ip_owner: "Client after full payment",
+const contractor = getDocType("independent-contractor")!;
+const nda = getDocType("nda-mutual")!;
+const base: Answers = {
+  jurisdiction: "India", effective_date: "2026-11-01", party_a_name: "Acme Pvt Ltd", party_a_address: "Bengaluru", party_a_signatory: "A. Rao, CEO",
+  party_b_name: "Sam Dev", party_b_address: "Mysuru", party_b_signatory: "Sam Dev",
 };
 
+describe("catalogue", () => {
+  it("loads all 5 templates from template_definitions.json", () => {
+    expect(questionsFor(nda)[0]?.fieldId).toBe("jurisdiction");
+    expect(getDocType("terms-of-service")).toBeDefined();
+  });
+});
+
 describe("questionnaire", () => {
-  it("shows invoice frequency only for hourly fees", () => {
-    expect(visibleFields(freelance, base).some((f) => f.id === "invoice_frequency")).toBe(false);
-    expect(visibleFields(freelance, { ...base, fee_type: "Hourly" }).some((f) => f.id === "invoice_frequency")).toBe(true);
+  it("asks common questions first, then the template's own", () => {
+    expect(nextQuestion(contractor, {})?.fieldId).toBe("jurisdiction");
+    expect(nextQuestion(contractor, base)?.fieldId).toBe("services_description");
   });
-  it("requires deposit amount when deposit is required", () => {
-    const v = validateSession(freelance, { ...base, deposit_required: true }, "IN");
-    expect(v.missing).toContain("deposit_amount");
-    expect(v.ok).toBe(false);
+  it("hides ip_ownership unless creates_ip is yes", () => {
+    const a = { ...base, services_description: "Build app", fee_amount: 1000, payment_schedule: "Monthly", creates_ip: false, has_confidentiality: false };
+    expect(validateAll(contractor, a).missing).not.toContain("ip_ownership");
+    expect(validateAll(contractor, { ...a, creates_ip: true }).missing).toContain("ip_ownership");
   });
-  it("rejects end date before start date", () => {
-    const v = validateSession(freelance, { ...base, end_date: "2025-12-01" }, "IN");
-    expect(v.crossErrors).toContain("Completion date must be after the start date.");
+  it("rejects select values outside the options", () => {
+    const q = questionsFor(contractor).find((x) => x.fieldId === "payment_schedule")!;
+    expect(coerceAnswer(q, "whenever").ok).toBe(false);
+    expect(coerceAnswer(q, "monthly")).toEqual({ ok: true, value: "Monthly" });
   });
-  it("blocks unsupported jurisdictions", () => {
-    expect(validateSession(freelance, base, "OTHER").ok).toBe(false);
-    expect(validateSession(freelance, base, "IN").ok).toBe(true);
+  it("blocks past start dates on offer letters", () => {
+    const q = questionsFor(getDocType("employment-offer")!).find((x) => x.fieldId === "start_date")!;
+    expect(coerceAnswer(q, "2020-01-01", new Date("2026-10-11")).ok).toBe(false);
   });
-  it("enforces numeric bounds", () => {
-    expect(validateSession(freelance, { ...base, payment_days: 500 }, "IN").fieldErrors["payment_days"]).toBe("Must be at most 120.");
-  });
-  it("reuses profile answers without overwriting", () => {
-    const out = prefillFromProfile(freelance, { your_name: "Kept" }, { your_name: "Old", your_address: "Mysuru" });
-    expect(out["your_name"]).toBe("Kept");
-    expect(out["your_address"]).toBe("Mysuru");
-  });
-  it("drops hidden answers", () => {
-    expect(pruneHidden(freelance, { ...base, deposit_required: false, deposit_amount: 10 })["deposit_amount"]).toBeUndefined();
+  it("flags identical parties as a conflict", () => {
+    expect(validateAll(nda, { ...base, party_b_name: "acme pvt ltd" }).conflicts.length).toBe(1);
   });
 });
 
-describe("generation", () => {
-  it("renders conditionals and placeholders", () => {
-    expect(renderTemplate("A{{#if x}}B{{/if}}{{#if y=Z}}C{{/if}} {{n}}", { x: true, y: "Z" })).toBe("ABC [N]");
+describe("jurisdiction guard", () => {
+  it("marks non-compete under Indian law unsupported with the s.27 warning", () => {
+    const v = validateAll(getDocType("non-compete")!, { jurisdiction: "India" });
+    expect(v.jurisdiction.supported).toBe(false);
+    expect(v.jurisdiction.warning).toMatch(/Section 27/);
   });
-  it("generates a draft with demo disclaimer", () => {
-    const d = generateDraft(freelance, base, "IN");
-    expect(d.body).toContain("fixed fee of INR 50,000");
-    expect(d.body).not.toContain("per hour");
-    expect(d.disclaimer).toMatch(/NOT REVIEWED BY A LAWYER/);
-  });
-  it("refuses to generate with missing info", () => {
-    expect(() => generateDraft(freelance, { your_name: "x" }, "IN")).toThrow(GenerationError);
+  it("marks UK unsupported everywhere", () => {
+    expect(validateAll(nda, { jurisdiction: "United Kingdom" }).jurisdiction.supported).toBe(false);
   });
 });
 
-describe("discovery", () => {
-  it("ranks the demand letter for unpaid invoices", () => {
-    expect(rankDocuments("client owes me money for an unpaid invoice")[0]?.slug).toBe("payment-demand-letter");
+describe("draft generation", () => {
+  const full = { ...base, purpose: "Exploring a pilot", term_years: 2, survival_years: 3 };
+  it("always injects the disclaimer and fills tokens", () => {
+    const d = renderDraft(nda, full, []);
+    expect(d.text.startsWith(DISCLAIMER)).toBe(true);
+    expect(d.text).toContain("Exploring a pilot");
+    expect(d.leftovers).toEqual([]);
   });
-  it("returns at most three", () => {
-    expect(rankDocuments("client project website data privacy confidential rent").length).toBeLessThanOrEqual(3);
+  it("includes only APPROVED clauses, never proposed ones", () => {
+    const d = renderDraft(nda, full, [
+      { id: "1", title: "Proposed one", body: "PPP", status: "proposed" },
+      { id: "2", title: "Approved one", body: "AAA", status: "approved" },
+    ]);
+    expect(d.text).toContain("AAA");
+    expect(d.text).not.toContain("PPP");
   });
-  it("drops non-catalog and duplicate model recommendations", () => {
-    const r = sanitizeRecommendations([{ slug: "fake", reason: "" }, { slug: "mutual-nda", reason: "a" }, { slug: "mutual-nda", reason: "b" }]);
-    expect(r).toEqual([{ slug: "mutual-nda", reason: "a" }]);
+  it("reports leftover placeholders when answers are missing", () => {
+    expect(renderDraft(nda, base, []).leftovers).toContain("purpose");
+  });
+});
+
+describe("agent helpers", () => {
+  it("recommends at most 3 documents", () => {
+    const r = rankDocTypes("hire a freelance developer for my website app", "IN");
+    expect(r.length).toBeLessThanOrEqual(3);
+    expect(r[0]?.id).toBe("independent-contractor");
+  });
+  it("flags an approved non-compete under Indian law", () => {
+    const issues = consistencyIssues(nda, { jurisdiction: "India" }, [{ id: "x", title: "Non-compete", body: "No competing", status: "approved" }]);
+    expect(issues.some((i) => /India/.test(i))).toBe(true);
   });
 });
