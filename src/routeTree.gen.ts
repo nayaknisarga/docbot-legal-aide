@@ -10,63 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AssistantRouteImport } from './routes/assistant'
-import { Route as DraftsRouteImport } from './routes/drafts'
-import { Route as DocumentsSlugRouteImport } from './routes/documents.$slug'
+import { Route as ApiAgentRouteImport } from './routes/api/agent'
+import { Route as DSessionIdRouteImport } from './routes/d.$sessionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AssistantRoute = AssistantRouteImport.update({
-  id: '/assistant',
-  path: '/assistant',
+const ApiAgentRoute = ApiAgentRouteImport.update({
+  id: '/api/agent',
+  path: '/api/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DraftsRoute = DraftsRouteImport.update({
-  id: '/drafts',
-  path: '/drafts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DocumentsSlugRoute = DocumentsSlugRouteImport.update({
-  id: '/documents/$slug',
-  path: '/documents/$slug',
+const DSessionIdRoute = DSessionIdRouteImport.update({
+  id: '/d/$sessionId',
+  path: '/d/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/assistant': typeof AssistantRoute
-  '/drafts': typeof DraftsRoute
-  '/documents/$slug': typeof DocumentsSlugRoute
+  '/api/agent': typeof ApiAgentRoute
+  '/d/$sessionId': typeof DSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/assistant': typeof AssistantRoute
-  '/drafts': typeof DraftsRoute
-  '/documents/$slug': typeof DocumentsSlugRoute
+  '/api/agent': typeof ApiAgentRoute
+  '/d/$sessionId': typeof DSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/assistant': typeof AssistantRoute
-  '/drafts': typeof DraftsRoute
-  '/documents/$slug': typeof DocumentsSlugRoute
+  '/api/agent': typeof ApiAgentRoute
+  '/d/$sessionId': typeof DSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assistant' | '/drafts' | '/documents/$slug'
+  fullPaths: '/' | '/api/agent' | '/d/$sessionId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistant' | '/drafts' | '/documents/$slug'
-  id: '__root__' | '/' | '/assistant' | '/drafts' | '/documents/$slug'
+  to: '/' | '/api/agent' | '/d/$sessionId'
+  id: '__root__' | '/' | '/api/agent' | '/d/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AssistantRoute: typeof AssistantRoute
-  DraftsRoute: typeof DraftsRoute
-  DocumentsSlugRoute: typeof DocumentsSlugRoute
+  ApiAgentRoute: typeof ApiAgentRoute
+  DSessionIdRoute: typeof DSessionIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,25 +68,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/assistant': {
-      id: '/assistant'
-      path: '/assistant'
-      fullPath: '/assistant'
-      preLoaderRoute: typeof AssistantRouteImport
+    '/api/agent': {
+      id: '/api/agent'
+      path: '/api/agent'
+      fullPath: '/api/agent'
+      preLoaderRoute: typeof ApiAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/drafts': {
-      id: '/drafts'
-      path: '/drafts'
-      fullPath: '/drafts'
-      preLoaderRoute: typeof DraftsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/documents/$slug': {
-      id: '/documents/$slug'
-      path: '/documents/$slug'
-      fullPath: '/documents/$slug'
-      preLoaderRoute: typeof DocumentsSlugRouteImport
+    '/d/$sessionId': {
+      id: '/d/$sessionId'
+      path: '/d/$sessionId'
+      fullPath: '/d/$sessionId'
+      preLoaderRoute: typeof DSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -104,9 +87,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AssistantRoute: AssistantRoute,
-  DraftsRoute: DraftsRoute,
-  DocumentsSlugRoute: DocumentsSlugRoute,
+  ApiAgentRoute: ApiAgentRoute,
+  DSessionIdRoute: DSessionIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
