@@ -33,10 +33,10 @@ export function sanitizeRecommendations(recs: unknown): Recommendation[] {
   const out: Recommendation[] = [];
   for (const r of recs) {
     if (!r || typeof r !== "object") continue;
-    const slug = String((r as Record<string, unknown>).slug ?? "");
+    const slug = String((r as Record<string, unknown>)["slug"] ?? "");
     if (!getDocumentType(slug) || seen.has(slug)) continue;
     seen.add(slug);
-    out.push({ slug, reason: String((r as Record<string, unknown>).reason ?? "").slice(0, 240) });
+    out.push({ slug, reason: String((r as Record<string, unknown>)["reason"] ?? "").slice(0, 240) });
     if (out.length === 3) break;
   }
   return out;

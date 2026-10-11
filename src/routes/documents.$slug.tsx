@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/documents/$slug")({
-  validateSearch: (s: Record<string, unknown>) => ({ session: typeof s.session === "string" ? s.session : undefined }),
+  validateSearch: (s: Record<string, unknown>): { session?: string } => (typeof s["session"] === "string" ? { session: s["session"] } : {}),
   loader: ({ params }) => {
     const doc = getDocumentType(params.slug);
     if (!doc) throw notFound();

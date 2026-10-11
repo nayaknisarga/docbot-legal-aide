@@ -51,7 +51,7 @@ Rules:
 }
 
 async function callGateway(history: ChatTurn[]): Promise<Record<string, unknown>> {
-  const key = process.env.LOVABLE_API_KEY;
+  const key = process.env["LOVABLE_API_KEY"];
   if (!key) throw new Error("AI is not configured");
   const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
     method: "POST",
@@ -101,19 +101,19 @@ export const askAssistant = createServerFn({ method: "POST" })
       .filter((t) => (t.role === "user" || t.role === "assistant") && typeof t.content === "string")
       .slice(-12)
       .map((t) => ({ role: t.role, content: t.content.slice(0, 2000) }));
-    if (!history.length || history[history.length - 1].role !== "user") throw new Error("Message required");
+    if (!history.length || history[history.length - 1]?.role !== "user") throw new Error("Message required");
     return { history };
   })
   .handler(async ({ data }): Promise<AssistantResult> => {
-    const lastUser = data.history[data.history.length - 1].content;
+    const lastUser = data.history[data.history.length - 1]?.content ?? "";
     try {
       const out = await callGateway(data.history);
-      const recommendations = sanitizeRecommendations(out.recommendations);
+      const recommendations = sanitizeRecommendations(out["recommendations"]);
       return {
-        reply: String(out.reply ?? "").slice(0, 600),
+        reply: String(out["reply"] ?? "").slice(0, 600),
         recommendations,
-        clarifyingQuestion: typeof out.clarifying_question === "string" && out.clarifying_question ? out.clarifying_question : null,
-        outOfScope: Boolean(out.out_of_scope) && recommendations.length === 0,
+        clarifyingQuestion: typeof out["clarifying_question"] === "string" && out["clarifying_question"] ? out["clarifying_question"] : null,
+        outOfScope: Boolean(out["out_of_scope"]) && recommendations.length === 0,
         source: "ai",
       };
     } catch (e) {

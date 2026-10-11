@@ -30,15 +30,15 @@ describe("questionnaire", () => {
     expect(validateSession(freelance, base, "IN").ok).toBe(true);
   });
   it("enforces numeric bounds", () => {
-    expect(validateSession(freelance, { ...base, payment_days: 500 }, "IN").fieldErrors.payment_days).toBe("Must be at most 120.");
+    expect(validateSession(freelance, { ...base, payment_days: 500 }, "IN").fieldErrors["payment_days"]).toBe("Must be at most 120.");
   });
   it("reuses profile answers without overwriting", () => {
     const out = prefillFromProfile(freelance, { your_name: "Kept" }, { your_name: "Old", your_address: "Mysuru" });
-    expect(out.your_name).toBe("Kept");
-    expect(out.your_address).toBe("Mysuru");
+    expect(out["your_name"]).toBe("Kept");
+    expect(out["your_address"]).toBe("Mysuru");
   });
   it("drops hidden answers", () => {
-    expect(pruneHidden(freelance, { ...base, deposit_required: false, deposit_amount: 10 }).deposit_amount).toBeUndefined();
+    expect(pruneHidden(freelance, { ...base, deposit_required: false, deposit_amount: 10 })["deposit_amount"]).toBeUndefined();
   });
 });
 
@@ -59,7 +59,7 @@ describe("generation", () => {
 
 describe("discovery", () => {
   it("ranks the demand letter for unpaid invoices", () => {
-    expect(rankDocuments("client owes me money for an unpaid invoice")[0].slug).toBe("payment-demand-letter");
+    expect(rankDocuments("client owes me money for an unpaid invoice")[0]?.slug).toBe("payment-demand-letter");
   });
   it("returns at most three", () => {
     expect(rankDocuments("client project website data privacy confidential rent").length).toBeLessThanOrEqual(3);
