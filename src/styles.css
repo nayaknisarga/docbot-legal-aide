@@ -166,3 +166,12 @@
   #print-area, #print-area * { visibility: visible; }
   #print-area { position: absolute; inset: 0; box-shadow: none; }
 }
+
+@keyframes fill-flash {
+  0% { background-color: oklch(0.93 0.12 95); }
+  100% { background-color: transparent; }
+}
+@utility animate-fill-flash {
+  animation: fill-flash 2.2s ease-out;
+  border-radius: 2px;
+}

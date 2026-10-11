@@ -76,3 +76,46 @@ export const getLatestDraft = createServerFn({ method: "GET" })
     if (error) throw new Error("Could not load draft");
     return row;
   });
+
+/** "Answer all at once" form: every value is validated deterministically; invalid ones are reported, valid ones saved. */
+export const saveAnswers = createServerFn({ method: "POST" })
+  .inputValidator((i: { sessionId: string; values: Record<string, string | number | boolean> }) =>
+    z.object({ sessionId: z.string().uuid(), values: z.record(z.union([z.string(), z.number(), z.boolean()])) }).parse(i))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: s, error } = await supabaseAdmin.from("doc_sessions").select("template_id, answers").eq("id", data.sessionId).maybeSingle();
+    if (error || !s) throw new Error("Session not found");
+    const doc = getDocType(s.template_id);
+    if (!doc) throw new Error("Unknown template");
+    const answers = { ...((s.answers ?? {}) as Answers) };
+    const errors: Record<string, string> = {};
+    for (const [field, value] of Object.entries(data.values)) {
+      const q = questionsFor(doc).find((x) => x.fieldId === field);
+      if (!q) continue;
+      if (value === "") continue;
+      const c = coerceAnswer(q, value);
+      if (c.ok) answers[field] = c.value; else errors[field] = c.error;
+    }
+    const { error: uErr } = await supabaseAdmin.from("doc_sessions").update({ answers: JSON.parse(JSON.stringify(answers)), updated_at: new Date().toISOString() }).eq("id", data.sessionId);
+    if (uErr) throw new Error("Could not save answers");
+    return { errors };
+  });
+
+/** Save a draft version when complete; otherwise answers are already saved and we just report progress. */
+export const saveDraftVersion = createServerFn({ method: "POST" })
+  .inputValidator((i: { sessionId: string }) => z.object({ sessionId: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { loadSessionData } = await import("./agent.server");
+    const { renderDraft, validateAll } = await import("./defs");
+    const d = await loadSessionData(data.sessionId);
+    if (!d) throw new Error("Session not found");
+    const doc = getDocType(d.session.template_id)!;
+    const v = validateAll(doc, d.answers);
+    if (!v.ok) return { saved: false as const, version: null };
+    const { text } = renderDraft(doc, d.answers, d.clauses.map((c) => ({ id: c.id, title: c.title, body: c.body, status: c.status as "proposed" | "approved" | "rejected" })));
+    const version = (d.drafts.at(-1)?.version ?? 0) + 1;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("generated_drafts").insert({ session_id: data.sessionId, version, body: text });
+    if (error) throw new Error("Could not save draft");
+    return { saved: true as const, version };
+  });
