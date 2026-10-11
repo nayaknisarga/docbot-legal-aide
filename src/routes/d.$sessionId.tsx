@@ -286,7 +286,9 @@ function AllAtOnceForm({ sessionId, doc, answers, onDone }: { sessionId: string;
   async function submit() {
     setSaving(true);
     try {
-      const r = await save({ data: { sessionId, values: vals } });
+      const withDefaults = { ...vals };
+      for (const q of remaining) if (withDefaults[q.fieldId] === undefined && q.default !== undefined && !Array.isArray(q.default)) withDefaults[q.fieldId] = q.default;
+      const r = await save({ data: { sessionId, values: withDefaults } });
       await qc.invalidateQueries({ queryKey: ["session", sessionId] });
       if (Object.keys(r.errors).length) { setErrors(r.errors); toast.warning("Some answers need fixing."); }
       else { toast.success("Answers saved"); onDone(); }
