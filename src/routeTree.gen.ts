@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiAgentRouteImport } from './routes/api/agent'
+import { Route as ApiDiscoveryRouteImport } from './routes/api/discovery'
 import { Route as DSessionIdRouteImport } from './routes/d.$sessionId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const ApiAgentRoute = ApiAgentRouteImport.update({
   path: '/api/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDiscoveryRoute = ApiDiscoveryRouteImport.update({
+  id: '/api/discovery',
+  path: '/api/discovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DSessionIdRoute = DSessionIdRouteImport.update({
   id: '/d/$sessionId',
   path: '/d/$sessionId',
@@ -32,30 +38,34 @@ const DSessionIdRoute = DSessionIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/agent': typeof ApiAgentRoute
+  '/api/discovery': typeof ApiDiscoveryRoute
   '/d/$sessionId': typeof DSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/agent': typeof ApiAgentRoute
+  '/api/discovery': typeof ApiDiscoveryRoute
   '/d/$sessionId': typeof DSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/agent': typeof ApiAgentRoute
+  '/api/discovery': typeof ApiDiscoveryRoute
   '/d/$sessionId': typeof DSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/agent' | '/d/$sessionId'
+  fullPaths: '/' | '/api/agent' | '/api/discovery' | '/d/$sessionId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/agent' | '/d/$sessionId'
-  id: '__root__' | '/' | '/api/agent' | '/d/$sessionId'
+  to: '/' | '/api/agent' | '/api/discovery' | '/d/$sessionId'
+  id: '__root__' | '/' | '/api/agent' | '/api/discovery' | '/d/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiAgentRoute: typeof ApiAgentRoute
+  ApiDiscoveryRoute: typeof ApiDiscoveryRoute
   DSessionIdRoute: typeof DSessionIdRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/discovery': {
+      id: '/api/discovery'
+      path: '/api/discovery'
+      fullPath: '/api/discovery'
+      preLoaderRoute: typeof ApiDiscoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/d/$sessionId': {
       id: '/d/$sessionId'
       path: '/d/$sessionId'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiAgentRoute: ApiAgentRoute,
+  ApiDiscoveryRoute: ApiDiscoveryRoute,
   DSessionIdRoute: DSessionIdRoute,
 }
 export const routeTree = rootRouteImport
