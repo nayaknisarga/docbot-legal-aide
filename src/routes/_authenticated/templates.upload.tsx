@@ -43,8 +43,8 @@ function Upload() {
 
   async function handle(file: File) {
     const lower = file.name.toLowerCase();
-    if (!lower.endsWith(".docx") && !lower.endsWith(".pdf")) return toast.error("Please choose a DOCX or PDF file.");
-    if (file.size > 10 * 1024 * 1024) return toast.error("Files must be 10 MB or smaller.");
+    if (!lower.endsWith(".docx") && !lower.endsWith(".pdf")) { toast.error("Please choose a DOCX or PDF file."); return; }
+    if (file.size > 10 * 1024 * 1024) { toast.error("Files must be 10 MB or smaller."); return; }
     if (!user) return;
     try {
       setBusy("Reading your file…");
@@ -52,7 +52,7 @@ function Upload() {
       if (text.length < 20) throw new Error("No readable text found. Scanned PDFs aren't supported yet.");
       setBusy("Storing the original…");
       const path = `${user.id}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]+/g, "_")}`;
-      const { error } = await supabase.storage.from("templates").upload(path, file, { contentType: file.type || undefined });
+      const { error } = await supabase.storage.from("templates").upload(path, file, { contentType: file.type || "application/octet-stream" });
       if (error) throw new Error("Upload failed. Please try again.");
       setBusy("The assistant is reviewing each clause…");
       const { id } = await register({ data: { name: file.name.replace(/\.(docx|pdf)$/i, ""), filePath: path, mimeType: file.type || "application/octet-stream", text } });
