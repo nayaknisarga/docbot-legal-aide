@@ -22,11 +22,17 @@ export const MAX_TEXT = 60000;
 export const MAX_CLAUSES = 80;
 
 /** Unsure or malformed verdicts become "review" — never guess green or red. */
-export function normalizeVerdict(verdict: unknown, note: unknown): { verdict: Verdict; note: string } {
+export function normalizeVerdict(
+  verdict: unknown,
+  note: unknown,
+): { verdict: Verdict; note: string } {
   const n = typeof note === "string" ? sanitizeWording(note).slice(0, 300) : "";
   if (verdict === "allowed") return { verdict: "allowed", note: n };
   if (verdict === "blocked" && n) return { verdict: "blocked", note: n };
-  return { verdict: "review", note: n || "Flagged for legal review — the assistant could not assess this confidently." };
+  return {
+    verdict: "review",
+    note: n || "Flagged for legal review — the assistant could not assess this confidently.",
+  };
 }
 
 /** Removes approval/guarantee language. Statuses are suggestions, not legal advice. */
@@ -42,7 +48,13 @@ export function sanitizeWording(text: string): string {
 
 const HEADING = /^(\d+(\.\d+)*[.)]?\s+\S|(section|article|clause|schedule)\s+[\dIVX]+)/i;
 function isCapsHeading(line: string) {
-  return line.length >= 3 && line.length < 80 && /[A-Z]/.test(line) && line === line.toUpperCase() && /^[A-Z0-9 .,&()'’:-]+$/.test(line);
+  return (
+    line.length >= 3 &&
+    line.length < 80 &&
+    /[A-Z]/.test(line) &&
+    line === line.toUpperCase() &&
+    /^[A-Z0-9 .,&()'’:-]+$/.test(line)
+  );
 }
 
 /** Deterministic clause split. The AI never rewrites original text — it only reviews these pieces. */
@@ -78,7 +90,10 @@ export function splitClauses(raw: string): { heading: string; body: string }[] {
 }
 
 /** Parses model JSON (optionally fenced) against a schema; null when malformed. */
-export function parseModelJson<S extends z.ZodTypeAny>(text: string, schema: S): z.output<S> | null {
+export function parseModelJson<S extends z.ZodTypeAny>(
+  text: string,
+  schema: S,
+): z.output<S> | null {
   const m = text.match(/\{[\s\S]*\}/);
   if (!m) return null;
   try {
@@ -91,31 +106,56 @@ export function parseModelJson<S extends z.ZodTypeAny>(text: string, schema: S):
 
 export const ReviewSchema = z.object({
   summary: z.string(),
-  reviews: z.array(z.object({ index: z.number(), verdict: z.string(), note: z.string().optional().default("") })),
+  reviews: z.array(
+    z.object({ index: z.number(), verdict: z.string(), note: z.string().optional().default("") }),
+  ),
 });
 export const AdditionSchema = z.object({
   reply: z.string().optional().default(""),
-  clauses: z.array(z.object({ heading: z.string(), body: z.string(), verdict: z.string(), note: z.string().optional().default("") })),
+  clauses: z.array(
+    z.object({
+      heading: z.string(),
+      body: z.string(),
+      verdict: z.string(),
+      note: z.string().optional().default(""),
+    }),
+  ),
 });
-export const RemovalSchema = z.object({ reply: z.string().optional().default(""), indexes: z.array(z.number()) });
+export const RemovalSchema = z.object({
+  reply: z.string().optional().default(""),
+  indexes: z.array(z.number()),
+});
 
 /** Research results are untrusted data. Keep only valid public HTTP(S) links and compact excerpts. */
 export function sanitizeResearchSources(input: unknown): LegalSource[] {
   if (!Array.isArray(input)) return [];
   const seen = new Set<string>();
-  return input.flatMap((item) => {
-    if (!item || typeof item !== "object") return [];
-    const row = item as Record<string, unknown>;
-    if (typeof row["url"] !== "string") return [];
-    let url: URL;
-    try { url = new URL(row["url"]); } catch { return []; }
-    if (!["http:", "https:"].includes(url.protocol) || seen.has(url.href)) return [];
-    seen.add(url.href);
-    const excerpts = Array.isArray(row["excerpts"]) ? row["excerpts"] : [];
-    const excerpt = excerpts.filter((v): v is string => typeof v === "string").join(" ").replace(/\s+/g, " ").slice(0, 700);
-    const title = typeof row["title"] === "string" && row["title"].trim() ? row["title"].trim().slice(0, 180) : url.hostname;
-    return [{ title, url: url.href, excerpt }];
-  }).slice(0, 5);
+  return input
+    .flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
+      const row = item as Record<string, unknown>;
+      if (typeof row["url"] !== "string") return [];
+      let url: URL;
+      try {
+        url = new URL(row["url"]);
+      } catch {
+        return [];
+      }
+      if (!["http:", "https:"].includes(url.protocol) || seen.has(url.href)) return [];
+      seen.add(url.href);
+      const excerpts = Array.isArray(row["excerpts"]) ? row["excerpts"] : [];
+      const excerpt = excerpts
+        .filter((v): v is string => typeof v === "string")
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .slice(0, 700);
+      const title =
+        typeof row["title"] === "string" && row["title"].trim()
+          ? row["title"].trim().slice(0, 180)
+          : url.hostname;
+      return [{ title, url: url.href, excerpt }];
+    })
+    .slice(0, 5);
 }
 
 /** Keeps only removal targets that exist and are currently in the draft. */
@@ -151,7 +191,10 @@ export function clauseBadge(c: Clause): { label: string; tone: BadgeTone } | nul
   if (c.origin === "added") {
     if (c.decision === "skipped") return { label: "Skipped", tone: "neutral" };
     if (c.verdict === "blocked") return { label: "✕ Cannot be added", tone: "danger" };
-    if (c.decision === "approved") return c.verdict === "review" ? { label: "◑ Added — review", tone: "warning" } : { label: "✓ Added", tone: "success" };
+    if (c.decision === "approved")
+      return c.verdict === "review"
+        ? { label: "◑ Added — review", tone: "warning" }
+        : { label: "✓ Added", tone: "success" };
     if (c.verdict === "review") return { label: "◑ Can be added — review", tone: "warning" };
     return { label: "Likely allowed · awaiting approval", tone: "neutral" };
   }

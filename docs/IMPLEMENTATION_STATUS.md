@@ -1,6 +1,7 @@
 # Implementation status
 
 ## Done
+
 - Catalogue: `src/lib/legal/template_definitions.json` (your file) drives the grid, questions, and preview. Demo template bodies live in `template-bodies.ts` because the referenced placeholder `.md` files were not supplied.
 - Template grid (`/`): grouped by category, search, All / Your documents tabs.
 - Split workspace (`/d/$sessionId`): AI agent chat (left) and live preview (right) with a pinned draft-only disclaimer, DOCX/PDF export, jurisdiction guard (unsupported + warnings).
@@ -13,6 +14,7 @@
 - Uploaded-template add/remove requests now search current legal sources before the AI proposes a change, show validated source links beside proposals, and still require Approve/Skip.
 
 ## Not yet built
+
 - User accounts and organizations. Sessions are currently addressed by an unguessable link stored in the browser.
 - Admin approval of uploaded templates, reviewed internal legal source registry, audit log, AI usage quotas.
 - Terms / Privacy / Disclaimer pages (need lawyer review).
