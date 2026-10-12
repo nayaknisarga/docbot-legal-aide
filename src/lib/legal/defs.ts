@@ -169,7 +169,7 @@ export type Segment = { kind: "text"; text: string } | { kind: "missing"; token:
  * Supports {{token}} (matching a question's mapsTo) and {{#if fieldId}}…{{/if}} / {{#if fieldId=Value}}…{{/if}}.
  */
 export function renderSegments(doc: DocType, answers: Answers): Segment[] {
-  const body = TEMPLATE_BODIES[doc.id] ?? "";
+  const body = TEMPLATE_BODIES[doc.id] ?? genericBody(doc);
   const qs = visibleQuestions(doc, answers);
   const byToken = new Map<string, Question>();
   for (const q of questionsFor(doc)) if (q.mapsTo) byToken.set(q.mapsTo.replace(/[{}]/g, ""), q);
