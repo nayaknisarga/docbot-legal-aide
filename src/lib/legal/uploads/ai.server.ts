@@ -1,7 +1,7 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { streamText } from "ai";
 import type { z } from "zod";
-import { parseModelJson } from "../uploads";
+import { parseModelJson, sanitizeResearchSources, type LegalSource } from "../uploads";
 import { createLovableAiGatewayRunIdFetch } from "../discovery/run-id.server";
 
 const MODEL = "google/gemini-3.8-flash";
@@ -16,6 +16,34 @@ export class AiError extends Error {
   constructor(message: string, public status: number) {
     super(message);
   }
+}
+
+/** Fetches current source material before clause changes. Results remain untrusted context. */
+export async function researchClauseRequest(request: string): Promise<LegalSource[]> {
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  const parallelKey = process.env["PARALLEL_API_KEY"];
+  if (!lovableKey || !parallelKey) return [];
+  const response = await fetch("https://connector-gateway.lovable.dev/parallel/v1/search", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${lovableKey}`,
+      "X-Connection-Api-Key": parallelKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      objective: "Find current, reliable legal sources relevant to this requested contract clause change in India and the United States. Prefer official legislation, regulators, courts, and government guidance. Do not treat sources as legal approval.",
+      search_queries: [request.replace(/\s+/g, " ").slice(0, 180)],
+      mode: "fast",
+      advanced_settings: { max_results: 5, excerpt_settings: { max_chars_per_result: 900 } },
+    }),
+  });
+  if (!response.ok) {
+    const detail = await response.text();
+    console.error(`Legal research failed [${response.status}]: ${detail.slice(0, 500)}`);
+    return [];
+  }
+  const payload = await response.json() as { results?: unknown };
+  return sanitizeResearchSources(payload.results);
 }
 
 function friendly(error: unknown): AiError {

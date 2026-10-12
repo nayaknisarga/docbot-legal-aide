@@ -10,8 +10,9 @@
 - Tests: `src/test/legal.test.ts`.
 
 - Upload your own template (`/templates/upload`, `/templates`, `/templates/$id`): sign-in required, original stored unchanged, Gemini reviews clauses, every add/remove needs Approve. Tests: `src/test/uploads.test.ts`.
+- Uploaded-template add/remove requests now search current legal sources before the AI proposes a change, show validated source links beside proposals, and still require Approve/Skip.
 
 ## Not yet built
 - User accounts and organizations. Sessions are currently addressed by an unguessable link stored in the browser.
-- Admin approval of uploaded templates, legal source registry, audit log, AI usage quotas.
+- Admin approval of uploaded templates, reviewed internal legal source registry, audit log, AI usage quotas.
 - Terms / Privacy / Disclaimer pages (need lawyer review).

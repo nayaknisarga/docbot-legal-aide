@@ -3,6 +3,7 @@ import { z } from "zod";
 /** Pure, tested logic for user-uploaded templates. AI output is always passed through these guards. */
 
 export type Verdict = "allowed" | "review" | "blocked";
+export type LegalSource = { title: string; url: string; excerpt: string };
 export type Clause = {
   id: string;
   position: number;
@@ -13,6 +14,7 @@ export type Clause = {
   verdict: Verdict;
   decision: "none" | "pending" | "approved" | "skipped";
   note: string;
+  sources: LegalSource[];
 };
 export type ChatMessage = { role: "assistant" | "user"; text: string };
 
@@ -96,6 +98,25 @@ export const AdditionSchema = z.object({
   clauses: z.array(z.object({ heading: z.string(), body: z.string(), verdict: z.string(), note: z.string().optional().default("") })),
 });
 export const RemovalSchema = z.object({ reply: z.string().optional().default(""), indexes: z.array(z.number()) });
+
+/** Research results are untrusted data. Keep only valid public HTTP(S) links and compact excerpts. */
+export function sanitizeResearchSources(input: unknown): LegalSource[] {
+  if (!Array.isArray(input)) return [];
+  const seen = new Set<string>();
+  return input.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const row = item as Record<string, unknown>;
+    if (typeof row["url"] !== "string") return [];
+    let url: URL;
+    try { url = new URL(row["url"]); } catch { return []; }
+    if (!["http:", "https:"].includes(url.protocol) || seen.has(url.href)) return [];
+    seen.add(url.href);
+    const excerpts = Array.isArray(row["excerpts"]) ? row["excerpts"] : [];
+    const excerpt = excerpts.filter((v): v is string => typeof v === "string").join(" ").replace(/\s+/g, " ").slice(0, 700);
+    const title = typeof row["title"] === "string" && row["title"].trim() ? row["title"].trim().slice(0, 180) : url.hostname;
+    return [{ title, url: url.href, excerpt }];
+  }).slice(0, 5);
+}
 
 /** Keeps only removal targets that exist and are currently in the draft. */
 export function validRemovalTargets(indexes: number[], active: Clause[]): Clause[] {

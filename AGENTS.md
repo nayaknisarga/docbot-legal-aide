@@ -14,3 +14,4 @@
 - Homepage discovery streams through a separate read-only TanStack server route and validates template choices against the catalogue; this prevents discovery from modifying document sessions.
 - Compose homepage chat with AI Elements and AI SDK UI messages; this preserves compatible streaming, tool states, and markdown rendering.
 - Uploaded templates are owned per signed-in account (row-level security + private storage folder per user); the AI only reviews deterministically split clauses and proposes adds/removals, and `decideTemplateClause` is the only path that applies a change — keeps original text unchanged and the user in control.
+- Uploaded-template clause changes research current legal sources server-side and persist only validated source URLs with proposals; source context never bypasses explicit user approval.

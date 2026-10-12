@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { clauseBadge, draftClauses, normalizeVerdict, sanitizeWording, splitClauses, validRemovalTargets, type Clause } from "@/lib/legal/uploads";
+import { clauseBadge, draftClauses, normalizeVerdict, sanitizeResearchSources, sanitizeWording, splitClauses, validRemovalTargets, type Clause } from "@/lib/legal/uploads";
 
-const c = (o: Partial<Clause>): Clause => ({ id: "x", position: 1, heading: "H", body: "B", origin: "original", action: "keep", verdict: "allowed", decision: "none", note: "", ...o });
+const c = (o: Partial<Clause>): Clause => ({ id: "x", position: 1, heading: "H", body: "B", origin: "original", action: "keep", verdict: "allowed", decision: "none", note: "", sources: [], ...o });
 
 describe("uploaded templates", () => {
   it("unsure or reasonless verdicts become review", () => {
@@ -29,5 +29,13 @@ describe("uploaded templates", () => {
     expect(clauseBadge(c({ origin: "added", decision: "approved" }))?.label).toBe("✓ Added");
     expect(clauseBadge(c({ origin: "added", decision: "pending", verdict: "blocked", note: "x" }))?.tone).toBe("danger");
     expect(clauseBadge(c({ origin: "added", decision: "pending", verdict: "review" }))?.label).toBe("◑ Can be added — review");
+  });
+  it("keeps only safe, deduplicated research sources", () => {
+    const sources = sanitizeResearchSources([
+      { title: "Official guidance", url: "https://example.gov/law", excerpts: ["Current guidance"] },
+      { title: "Duplicate", url: "https://example.gov/law", excerpts: [] },
+      { title: "Unsafe", url: "javascript:alert(1)", excerpts: [] },
+    ]);
+    expect(sources).toEqual([{ title: "Official guidance", url: "https://example.gov/law", excerpt: "Current guidance" }]);
   });
 });
