@@ -4,7 +4,6 @@ import { useState } from "react";
 import { FileUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteShell } from "@/components/legal/SiteShell";
-import { Button } from "@/components/ui/button";
 import { registerTemplate } from "@/lib/legal/uploads.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -77,7 +76,6 @@ function Upload() {
           <input type="file" accept=".docx,.pdf" className="sr-only" disabled={!!busy} onChange={(e) => e.target.files?.[0] && handle(e.target.files[0])} />
         </label>
         <p className="mt-6 text-xs text-muted-foreground">Clause statuses are suggestions, not legal advice. Have a lawyer review anything important.</p>
-        <Button variant="ghost" className="hidden" />
       </div>
     </SiteShell>
   );

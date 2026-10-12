@@ -83,6 +83,14 @@ function Index() {
             <h2 id="browse-title" className="text-3xl text-primary">
               Or browse all templates
             </h2>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button asChild>
+                <Link to="/templates/upload">Upload your template</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/templates">Check your registered templates</Link>
+              </Button>
+            </div>
           </div>
           <div className="relative w-full md:w-80">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />

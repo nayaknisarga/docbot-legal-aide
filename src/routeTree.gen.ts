@@ -10,13 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApiAgentRouteImport } from './routes/api/agent'
 import { Route as ApiDiscoveryRouteImport } from './routes/api/discovery'
 import { Route as DSessionIdRouteImport } from './routes/d.$sessionId'
+import { Route as AuthenticatedTemplatesIndexRouteImport } from './routes/_authenticated/templates.index'
+import { Route as AuthenticatedTemplatesTemplateIdRouteImport } from './routes/_authenticated/templates.$templateId'
+import { Route as AuthenticatedTemplatesUploadRouteImport } from './routes/_authenticated/templates.upload'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAgentRoute = ApiAgentRouteImport.update({
@@ -34,36 +48,95 @@ const DSessionIdRoute = DSessionIdRouteImport.update({
   path: '/d/$sessionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTemplatesIndexRoute =
+  AuthenticatedTemplatesIndexRouteImport.update({
+    id: '/templates/',
+    path: '/templates/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedTemplatesTemplateIdRoute =
+  AuthenticatedTemplatesTemplateIdRouteImport.update({
+    id: '/templates/$templateId',
+    path: '/templates/$templateId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedTemplatesUploadRoute =
+  AuthenticatedTemplatesUploadRouteImport.update({
+    id: '/templates/upload',
+    path: '/templates/upload',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/api/agent': typeof ApiAgentRoute
   '/api/discovery': typeof ApiDiscoveryRoute
   '/d/$sessionId': typeof DSessionIdRoute
+  '/templates/$templateId': typeof AuthenticatedTemplatesTemplateIdRoute
+  '/templates/upload': typeof AuthenticatedTemplatesUploadRoute
+  '/templates/': typeof AuthenticatedTemplatesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/api/agent': typeof ApiAgentRoute
   '/api/discovery': typeof ApiDiscoveryRoute
   '/d/$sessionId': typeof DSessionIdRoute
+  '/templates/$templateId': typeof AuthenticatedTemplatesTemplateIdRoute
+  '/templates/upload': typeof AuthenticatedTemplatesUploadRoute
+  '/templates': typeof AuthenticatedTemplatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/auth': typeof AuthRoute
   '/api/agent': typeof ApiAgentRoute
   '/api/discovery': typeof ApiDiscoveryRoute
   '/d/$sessionId': typeof DSessionIdRoute
+  '/_authenticated/templates/$templateId': typeof AuthenticatedTemplatesTemplateIdRoute
+  '/_authenticated/templates/upload': typeof AuthenticatedTemplatesUploadRoute
+  '/_authenticated/templates/': typeof AuthenticatedTemplatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/agent' | '/api/discovery' | '/d/$sessionId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/api/agent'
+    | '/api/discovery'
+    | '/d/$sessionId'
+    | '/templates/$templateId'
+    | '/templates/upload'
+    | '/templates/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/agent' | '/api/discovery' | '/d/$sessionId'
-  id: '__root__' | '/' | '/api/agent' | '/api/discovery' | '/d/$sessionId'
+  to:
+    | '/'
+    | '/auth'
+    | '/api/agent'
+    | '/api/discovery'
+    | '/d/$sessionId'
+    | '/templates/$templateId'
+    | '/templates/upload'
+    | '/templates'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/api/agent'
+    | '/api/discovery'
+    | '/d/$sessionId'
+    | '/_authenticated/templates/$templateId'
+    | '/_authenticated/templates/upload'
+    | '/_authenticated/templates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ApiAgentRoute: typeof ApiAgentRoute
   ApiDiscoveryRoute: typeof ApiDiscoveryRoute
   DSessionIdRoute: typeof DSessionIdRoute
@@ -76,6 +149,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/agent': {
@@ -99,11 +186,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DSessionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/templates/': {
+      id: '/_authenticated/templates/'
+      path: '/templates'
+      fullPath: '/templates/'
+      preLoaderRoute: typeof AuthenticatedTemplatesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/templates/$templateId': {
+      id: '/_authenticated/templates/$templateId'
+      path: '/templates/$templateId'
+      fullPath: '/templates/$templateId'
+      preLoaderRoute: typeof AuthenticatedTemplatesTemplateIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/templates/upload': {
+      id: '/_authenticated/templates/upload'
+      path: '/templates/upload'
+      fullPath: '/templates/upload'
+      preLoaderRoute: typeof AuthenticatedTemplatesUploadRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedTemplatesTemplateIdRoute: typeof AuthenticatedTemplatesTemplateIdRoute
+  AuthenticatedTemplatesUploadRoute: typeof AuthenticatedTemplatesUploadRoute
+  AuthenticatedTemplatesIndexRoute: typeof AuthenticatedTemplatesIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedTemplatesTemplateIdRoute: AuthenticatedTemplatesTemplateIdRoute,
+  AuthenticatedTemplatesUploadRoute: AuthenticatedTemplatesUploadRoute,
+  AuthenticatedTemplatesIndexRoute: AuthenticatedTemplatesIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthRoute: AuthRoute,
   ApiAgentRoute: ApiAgentRoute,
   ApiDiscoveryRoute: ApiDiscoveryRoute,
   DSessionIdRoute: DSessionIdRoute,
