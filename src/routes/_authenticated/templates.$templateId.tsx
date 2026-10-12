@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertTriangle, Loader2, Send } from "lucide-react";
+import { AlertTriangle, ExternalLink, Loader2, Send } from "lucide-react";
 import { toast } from "sonner";
 import { SiteShell } from "@/components/legal/SiteShell";
 import { ClauseBadge } from "@/components/legal/ClauseBadge";
@@ -118,6 +118,20 @@ function Workspace() {
                       <ClauseBadge clause={c} />
                     </div>
                     {c.note && <p className="mt-2 text-xs text-muted-foreground">{c.note} <em>Suggestion only, not legal advice.</em></p>}
+                    {c.sources?.length > 0 && (
+                      <details className="mt-3 text-xs">
+                        <summary className="cursor-pointer font-medium text-primary">Sources checked ({c.sources.length})</summary>
+                        <ul className="mt-2 space-y-2">
+                          {c.sources.map((source) => (
+                            <li key={source.url}>
+                              <a className="inline-flex items-start gap-1 text-primary underline decoration-border underline-offset-2" href={source.url} target="_blank" rel="noreferrer">
+                                {source.title} <ExternalLink className="mt-0.5 h-3 w-3 shrink-0" />
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    )}
                     {c.decision === "pending" && (
                       <div className="mt-3 flex gap-2">
                         <Button size="sm" disabled={deciding === c.id || (c.origin === "added" && c.verdict === "blocked")} onClick={() => onDecide(c, "approved")}>Approve</Button>
@@ -185,6 +199,7 @@ function Workspace() {
                     {red && c.note && (
                       <p className="mt-2 flex gap-1 font-sans text-xs text-destructive"><AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" /> {c.note} — review with a lawyer.</p>
                     )}
+                    {c.sources?.length > 0 && <p className="mt-2 font-sans text-xs text-muted-foreground">Based on {c.sources.length} source{c.sources.length > 1 ? "s" : ""} checked by the assistant · suggestion only.</p>}
                   </div>
                 );
               })}
