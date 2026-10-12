@@ -6,7 +6,14 @@ import { toast } from "sonner";
 import { SiteShell, RiskBadge, DemoBadge } from "@/components/legal/SiteShell";
 import { CATEGORIES, DISCLAIMER, DOC_TYPES, getDocType } from "@/lib/legal/defs";
 import { createSession, listSessions } from "@/lib/legal/sessions.functions";
-import { documentNameSchema, loadProfile, loadSessionNames, mySessionIds, rememberSession, renameSavedSession } from "@/lib/legal/local";
+import {
+  documentNameSchema,
+  loadProfile,
+  loadSessionNames,
+  mySessionIds,
+  rememberSession,
+  renameSavedSession,
+} from "@/lib/legal/local";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DiscoveryChat } from "@/components/legal/DiscoveryChat";
@@ -205,21 +212,85 @@ function Index() {
               return (
                 <div key={s.id} className="flex flex-wrap items-center gap-3 p-4">
                   {editing === s.id ? (
-                    <form className="flex min-w-0 flex-1 flex-wrap items-start gap-2" onSubmit={(e) => { e.preventDefault(); saveName(s.id); }}>
+                    <form
+                      className="flex min-w-0 flex-1 flex-wrap items-start gap-2"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        saveName(s.id);
+                      }}
+                    >
                       <div className="min-w-0 flex-1 basis-40">
-                        <Input autoFocus aria-label="Document name" maxLength={120} value={name} onChange={(e) => { setName(e.target.value); setNameError(""); }} aria-invalid={!!nameError} aria-describedby={nameError ? `name-error-${s.id}` : undefined} onKeyDown={(e) => { if (e.key === "Escape") setEditing(null); }} />
-                        {nameError && <p id={`name-error-${s.id}`} role="alert" className="mt-1 text-sm text-destructive">{nameError}</p>}
+                        <Input
+                          autoFocus
+                          aria-label="Document name"
+                          maxLength={120}
+                          value={name}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            setNameError("");
+                          }}
+                          aria-invalid={!!nameError}
+                          aria-describedby={nameError ? `name-error-${s.id}` : undefined}
+                          onKeyDown={(e) => {
+                            if (e.key === "Escape") setEditing(null);
+                          }}
+                        />
+                        {nameError && (
+                          <p
+                            id={`name-error-${s.id}`}
+                            role="alert"
+                            className="mt-1 text-sm text-destructive"
+                          >
+                            {nameError}
+                          </p>
+                        )}
                       </div>
-                      <Button type="submit" size="icon" aria-label="Save document name" title="Save name"><Check className="h-4 w-4" /></Button>
-                      <Button type="button" variant="ghost" size="icon" aria-label="Cancel rename" title="Cancel" onClick={() => setEditing(null)}><X className="h-4 w-4" /></Button>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        aria-label="Save document name"
+                        title="Save name"
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Cancel rename"
+                        title="Cancel"
+                        onClick={() => setEditing(null)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </form>
                   ) : (
                     <>
-                      <Link to="/d/$sessionId" params={{ sessionId: s.id }} className="min-w-0 flex-1 break-words font-serif text-lg hover:underline">{displayName}</Link>
-                      <Button variant="ghost" size="icon" aria-label={`Rename ${displayName}`} title="Rename document" onClick={() => { setEditing(s.id); setName(displayName); setNameError(""); }}><Pencil className="h-4 w-4" /></Button>
+                      <Link
+                        to="/d/$sessionId"
+                        params={{ sessionId: s.id }}
+                        className="min-w-0 flex-1 break-words font-serif text-lg hover:underline"
+                      >
+                        {displayName}
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Rename ${displayName}`}
+                        title="Rename document"
+                        onClick={() => {
+                          setEditing(s.id);
+                          setName(displayName);
+                          setNameError("");
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
                     </>
                   )}
-                  <span className="text-xs text-muted-foreground">{s.status} · {new Date(s.updatedAt).toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {s.status} · {new Date(s.updatedAt).toLocaleString()}
+                  </span>
                 </div>
               );
             })}

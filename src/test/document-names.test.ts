@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { documentNameSchema, loadSessionNames, rememberSession, renameSavedSession } from "@/lib/legal/local";
+import {
+  documentNameSchema,
+  loadSessionNames,
+  rememberSession,
+  renameSavedSession,
+} from "@/lib/legal/local";
 
 describe("saved document names", () => {
   const id = "a8638b65-3eb8-4a7c-bebf-1c815a8ac247";
