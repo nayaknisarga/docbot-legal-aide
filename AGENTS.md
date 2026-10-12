@@ -13,3 +13,4 @@
 - AI calls run only server-side (server functions or `src/routes/api/agent.ts`); agent tools are bound to the session server-side and can only propose clauses — approval is a separate user-only server function.
 - Homepage discovery streams through a separate read-only TanStack server route and validates template choices against the catalogue; this prevents discovery from modifying document sessions.
 - Compose homepage chat with AI Elements and AI SDK UI messages; this preserves compatible streaming, tool states, and markdown rendering.
+- Uploaded templates are owned per signed-in account (row-level security + private storage folder per user); the AI only reviews deterministically split clauses and proposes adds/removals, and `decideTemplateClause` is the only path that applies a change — keeps original text unchanged and the user in control.

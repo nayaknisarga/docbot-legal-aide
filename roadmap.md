@@ -1,3 +1,3 @@
 - [x] Add single-session homepage discovery chat with secure AI recommendations.
 - [x] Keep searchable category-grouped catalogue and existing document navigation.
-- [x] Test recommendation limits, catalogue filtering, chat and navigation.
+- [x] Test recommendation limits, catalogue filtering, chat and navigation.- [x] Upload your own template (DOCX/PDF) with sign-in, AI clause review, add/remove proposals, approve/skip, red risk highlights.

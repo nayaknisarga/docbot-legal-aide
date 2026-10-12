@@ -9,7 +9,9 @@
 - AI clause drafts use a fixed JSON schema, are re-validated, retried once, then fall back to "no clause". Chat messages are shape-validated before saving.
 - Tests: `src/test/legal.test.ts`.
 
+- Upload your own template (`/templates/upload`, `/templates`, `/templates/$id`): sign-in required, original stored unchanged, Gemini reviews clauses, every add/remove needs Approve. Tests: `src/test/uploads.test.ts`.
+
 ## Not yet built
 - User accounts and organizations. Sessions are currently addressed by an unguessable link stored in the browser.
-- Template upload + admin approval, legal source registry, audit log, AI usage quotas.
+- Admin approval of uploaded templates, legal source registry, audit log, AI usage quotas.
 - Terms / Privacy / Disclaimer pages (need lawyer review).
