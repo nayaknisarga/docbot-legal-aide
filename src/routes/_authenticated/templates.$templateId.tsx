@@ -140,7 +140,7 @@ function Workspace() {
                   {pendingText}
                 </div>
                 <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Reviewing…
+                  <Loader2 className="h-4 w-4 animate-spin" /> {mode === "ask" ? "Checking Indian and US law…" : "Reviewing…"}
                 </p>
               </>
             )}
@@ -249,7 +249,9 @@ function Workspace() {
                 }}
                 aria-label="Message the assistant"
                 placeholder={
-                  data.stage === "ask_remove" || (data.stage === "done" && mode === "remove")
+                  mode === "ask"
+                    ? "e.g. is a 2-year non-compete after employment valid?"
+                    : data.stage === "ask_remove" || (data.stage === "done" && mode === "remove")
                     ? "e.g. remove the non-compete clause"
                     : "e.g. add a confidentiality clause for 3 years"
                 }

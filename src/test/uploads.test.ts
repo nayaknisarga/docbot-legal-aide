@@ -80,3 +80,29 @@ describe("uploaded templates", () => {
     ]);
   });
 });
+
+import { formatLegalAnswer } from "@/lib/legal/uploads";
+describe("legal question answers", () => {
+  it("shows separate India and US verdicts, unsure becomes review", () => {
+    const t = formatLegalAnswer(
+      { answer: "", india: { verdict: "blocked", explanation: "Section 27 voids restraints of trade." }, us: { verdict: "maybe", explanation: "" }, clarifying_question: "" },
+      [],
+    );
+    expect(t).toContain("India: ✕ May be unenforceable");
+    expect(t).toContain("United States: ◑ Flagged for legal review");
+  });
+  it("asks one clarifying question instead of guessing", () => {
+    const t = formatLegalAnswer(
+      { answer: "x", india: { verdict: "allowed", explanation: "" }, us: { verdict: "allowed", explanation: "" }, clarifying_question: "Which clause do you mean?" },
+      [],
+    );
+    expect(t).toBe("Which clause do you mean?");
+  });
+  it("never says legally approved", () => {
+    const t = formatLegalAnswer(
+      { answer: "This is legally approved.", india: { verdict: "allowed", explanation: "" }, us: { verdict: "allowed", explanation: "" }, clarifying_question: "" },
+      [],
+    );
+    expect(t).not.toMatch(/legally approved/i);
+  });
+});
