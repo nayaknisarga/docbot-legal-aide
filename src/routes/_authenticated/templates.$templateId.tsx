@@ -47,7 +47,7 @@ function Workspace() {
   const [data, setData] = useState<Data | null>(null);
   const [input, setInput] = useState("");
   const [pendingText, setPendingText] = useState<string | null>(null);
-  const [mode, setMode] = useState<"add" | "remove">("add");
+  const [mode, setMode] = useState<"add" | "remove" | "ask">("add");
   const [deciding, setDeciding] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
@@ -212,22 +212,29 @@ function Workspace() {
             <div ref={endRef} />
           </div>
           <div className="border-t border-border p-4">
-            {data.stage === "done" && (
-              <div className="mb-2 flex gap-2" role="radiogroup" aria-label="Request type">
-                {(["add", "remove"] as const).map((m) => (
-                  <Button
-                    key={m}
-                    size="sm"
-                    variant={mode === m ? "default" : "outline"}
-                    role="radio"
-                    aria-checked={mode === m}
-                    onClick={() => setMode(m)}
-                  >
-                    {m === "add" ? "Add a clause" : "Remove a clause"}
-                  </Button>
-                ))}
-              </div>
-            )}
+            <div className="mb-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Request type">
+              {(data.stage === "done"
+                ? (["add", "remove", "ask"] as const)
+                : (["add", "ask"] as const)
+              ).map((m) => (
+                <Button
+                  key={m}
+                  size="sm"
+                  variant={mode === m ? "default" : "outline"}
+                  role="radio"
+                  aria-checked={mode === m}
+                  onClick={() => setMode(m)}
+                >
+                  {m === "ask"
+                    ? "Ask: is this clause OK in India / US?"
+                    : data.stage !== "done"
+                      ? "Answer this step"
+                      : m === "add"
+                        ? "Add a clause"
+                        : "Remove a clause"}
+                </Button>
+              ))}
+            </div>
             <div className="flex gap-2">
               <Textarea
                 ref={taRef}
