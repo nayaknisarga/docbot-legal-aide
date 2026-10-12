@@ -17,3 +17,4 @@
 - Compose homepage chat with AI Elements and AI SDK UI messages; this preserves compatible streaming, tool states, and markdown rendering.
 - Uploaded templates are owned per signed-in account (row-level security + private storage folder per user); the AI only reviews deterministically split clauses and proposes adds/removals, and `decideTemplateClause` is the only path that applies a change — keeps original text unchanged and the user in control.
 - Uploaded-template clause changes research current legal sources server-side and persist only validated source URLs with proposals; source context never bypasses explicit user approval.
+- Saved-document display names are validated browser-local aliases, separate from template wording and server session data — renaming must never alter legal document contents.
