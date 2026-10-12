@@ -250,3 +250,31 @@ export function consistencyIssues(doc: DocType, answers: Answers, clauses: (Clau
     issues.push("A confidentiality clause is approved but you answered 'no' to including confidentiality.");
   return issues;
 }
+
+/** Structured fallback body for catalogue templates without a hand-written body; built only from the template's own questions. */
+export function genericBody(doc: DocType): string {
+  const all = questionsFor(doc);
+  const has = new Set(all.map((q) => q.fieldId));
+  const own = all.filter((q) => q.mapsTo && !["jurisdiction", "effective_date"].includes(q.fieldId) && !q.fieldId.startsWith("party_"));
+  const sections = own
+    .map((q, i) => {
+      const line = `${i + 1}. ${q.label.replace(/\?$/, "").toUpperCase()}\n${q.mapsTo}`;
+      return q.visibleWhen && q.visibleWhen.equals === true ? `{{#if ${q.visibleWhen.fieldId}}}${line}\n\n{{/if}}` : `${line}\n\n`;
+    })
+    .join("");
+  const party = (k: "a" | "b", role: string) =>
+    has.has(`party_${k}_name`) ? `{{party_${k}_name}}${has.has(`party_${k}_address`) ? `, of {{party_${k}_address}}` : ""} ("${role}")` : "";
+  const ps = [party("a", "Party A"), party("b", "Party B")].filter(Boolean);
+  const parties = ps.length ? `BETWEEN\n${ps.join(", and\n")}.\n\n` : "";
+  const sg = (["a", "b"] as const).filter((k) => has.has(`party_${k}_signatory`)).map((k) => `Party ${k.toUpperCase()}: {{party_${k}_signatory}}`);
+  const signs = sg.length ? `SIGNATURES\n${sg.join("\n")}` : "SIGNATURE\n______________________";
+  return `${doc.name.toUpperCase()}
+
+This ${doc.name} is made effective {{effective_date}} and is governed by the laws of {{jurisdiction}}.
+
+${parties}${sections}${own.length + 1}. GENERAL
+This document records the details provided by the parties. Any change must be made in writing and signed by the parties. If any provision is held unenforceable, the remaining provisions continue in effect.
+
+${signs}
+`;
+}

@@ -9,7 +9,7 @@ const base: Answers = {
 };
 
 describe("catalogue", () => {
-  it("loads all 5 templates from template_definitions.json", () => {
+  it("loads templates from template_definitions.json", () => {
     expect(questionsFor(nda)[0]?.fieldId).toBe("jurisdiction");
     expect(getDocType("terms-of-service")).toBeDefined();
   });
