@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
-import { Check, FileText, Loader2, Pencil, Search, X } from "lucide-react";
+import { Check, ChevronDown, FileText, Loader2, Pencil, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { SiteShell, RiskBadge, DemoBadge } from "@/components/legal/SiteShell";
 import { CATEGORIES, DISCLAIMER, DOC_TYPES, getDocType } from "@/lib/legal/defs";
@@ -45,6 +45,7 @@ type Mine = { id: string; templateId: string; status: string; updatedAt: string 
 function Index() {
   const [q, setQ] = useState("");
   const [tab, setTab] = useState<"all" | "mine">("all");
+  const [openCats, setOpenCats] = useState<string[]>([]);
   const [opening, setOpening] = useState<string | null>(null);
   const [mine, setMine] = useState<Mine[] | null>(null);
   const [names, setNames] = useState<Record<string, string>>({});
@@ -148,14 +149,27 @@ function Index() {
         </div>
 
         {tab === "all" ? (
-          <div className="mt-6 space-y-12">
+          <div className="mt-6 divide-y divide-border rounded-lg border border-border bg-card">
             {CATEGORIES.map((c) => {
               const docs = filtered.filter((d) => d.categories.includes(c.id));
               if (!docs.length) return null;
+              const isOpen = !!q.trim() || openCats.includes(c.id);
               return (
                 <section key={c.id}>
-                  <h2 className="mb-4 text-2xl">{c.name}</h2>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenCats((p) => (p.includes(c.id) ? p.filter((x) => x !== c.id) : [...p, c.id]))}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-muted/50"
+                  >
+                    <span className="flex items-baseline gap-3">
+                      <span className="font-serif text-lg">{c.name}</span>
+                      <span className="text-xs text-muted-foreground">{docs.length} templates</span>
+                    </span>
+                    <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {isOpen && (
+                  <div className="grid gap-4 px-5 pb-5 sm:grid-cols-2 lg:grid-cols-3">
                     {docs.map((d) => (
                       <Button
                         variant="outline"
@@ -185,6 +199,7 @@ function Index() {
                       </Button>
                     ))}
                   </div>
+                  )}
                 </section>
               );
             })}
