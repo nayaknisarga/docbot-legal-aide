@@ -92,90 +92,92 @@ export function DiscoveryChat({
       {hasConversation && (
         <div className="mb-4 overflow-hidden rounded-lg border border-border bg-card">
           <Conversation className="h-[300px] sm:h-[340px]">
-          <ConversationContent className="gap-6 p-5 sm:p-7">
-            {messages.slice(1).map((message) => (
-              <Message key={message.id} from={message.role} className="max-w-full">
-                <MessageContent className="w-full group-[.is-user]:w-fit group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground">
-                  {message.parts.map((part, i) => {
-                    if (part.type === "text")
-                      return <MessageResponse key={i}>{part.text}</MessageResponse>;
-                    if (part.type === "reasoning")
+            <ConversationContent className="gap-6 p-5 sm:p-7">
+              {messages.slice(1).map((message) => (
+                <Message key={message.id} from={message.role} className="max-w-full">
+                  <MessageContent className="w-full group-[.is-user]:w-fit group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground">
+                    {message.parts.map((part, i) => {
+                      if (part.type === "text")
+                        return <MessageResponse key={i}>{part.text}</MessageResponse>;
+                      if (part.type === "reasoning")
+                        return (
+                          <details key={i} className="text-xs text-muted-foreground">
+                            <summary className="cursor-pointer">Thinking</summary>
+                            <MessageResponse>{part.text}</MessageResponse>
+                          </details>
+                        );
+                      if (!isToolUIPart(part) || part.type === "dynamic-tool") return null;
+                      const recommendations =
+                        part.state === "output-available"
+                          ? sanitizeRecommendations(part.output)
+                          : [];
                       return (
-                        <details key={i} className="text-xs text-muted-foreground">
-                          <summary className="cursor-pointer">Thinking</summary>
-                          <MessageResponse>{part.text}</MessageResponse>
-                        </details>
-                      );
-                    if (!isToolUIPart(part) || part.type === "dynamic-tool") return null;
-                    const recommendations =
-                      part.state === "output-available" ? sanitizeRecommendations(part.output) : [];
-                    return (
-                      <div key={i} className="w-full">
-                        <Tool defaultOpen={false} className="mb-3">
-                          <ToolHeader
-                            type={part.type}
-                            state={part.state}
-                            title="Finding documents"
-                          />
-                          <ToolContent>
-                            <ToolInput input={part.input} />
-                            {part.state === "output-error" && (
-                              <p className="text-sm text-destructive">{part.errorText}</p>
-                            )}
-                          </ToolContent>
-                        </Tool>
-                        <div className="space-y-3">
-                          {recommendations.map(({ templateId, reason }) => {
-                            const doc = getDocType(templateId);
-                            if (!doc) return null;
-                            return (
-                              <article
-                                key={templateId}
-                                className="rounded-md border border-border p-4"
-                              >
-                                <div className="flex items-start gap-3">
-                                  <FileText className="mt-1 h-4 w-4 shrink-0 text-primary" />
-                                  <div className="min-w-0 flex-1">
-                                    <h3 className="text-lg">{doc.name}</h3>
-                                    <p className="mt-1 text-sm text-muted-foreground">{reason}</p>
+                        <div key={i} className="w-full">
+                          <Tool defaultOpen={false} className="mb-3">
+                            <ToolHeader
+                              type={part.type}
+                              state={part.state}
+                              title="Finding documents"
+                            />
+                            <ToolContent>
+                              <ToolInput input={part.input} />
+                              {part.state === "output-error" && (
+                                <p className="text-sm text-destructive">{part.errorText}</p>
+                              )}
+                            </ToolContent>
+                          </Tool>
+                          <div className="space-y-3">
+                            {recommendations.map(({ templateId, reason }) => {
+                              const doc = getDocType(templateId);
+                              if (!doc) return null;
+                              return (
+                                <article
+                                  key={templateId}
+                                  className="rounded-md border border-border p-4"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <FileText className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                                    <div className="min-w-0 flex-1">
+                                      <h3 className="text-lg">{doc.name}</h3>
+                                      <p className="mt-1 text-sm text-muted-foreground">{reason}</p>
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                                  <span className="flex flex-wrap gap-2">
-                                    <RiskBadge level={doc.riskLevel} />
-                                    <DemoBadge />
-                                    <span className="text-xs text-muted-foreground">
-                                      {doc.jurisdiction.join(" · ")}
+                                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                                    <span className="flex flex-wrap gap-2">
+                                      <RiskBadge level={doc.riskLevel} />
+                                      <DemoBadge />
+                                      <span className="text-xs text-muted-foreground">
+                                        {doc.jurisdiction.join(" · ")}
+                                      </span>
                                     </span>
-                                  </span>
-                                  <Button
-                                    size="sm"
-                                    disabled={Boolean(opening)}
-                                    onClick={() => onStart(templateId)}
-                                  >
-                                    Start this <ArrowRight className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              </article>
-                            );
-                          })}
+                                    <Button
+                                      size="sm"
+                                      disabled={Boolean(opening)}
+                                      onClick={() => onStart(templateId)}
+                                    >
+                                      Start this <ArrowRight className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                </article>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </MessageContent>
-              </Message>
-            ))}
-            {status === "submitted" && (
-              <Shimmer className="text-sm">Finding the right document…</Shimmer>
-            )}
-            {error && (
-              <p role="alert" className="text-sm text-destructive">
-                {error.message}
-              </p>
-            )}
-          </ConversationContent>
-          <ConversationScrollButton />
+                      );
+                    })}
+                  </MessageContent>
+                </Message>
+              ))}
+              {status === "submitted" && (
+                <Shimmer className="text-sm">Finding the right document…</Shimmer>
+              )}
+              {error && (
+                <p role="alert" className="text-sm text-destructive">
+                  {error.message}
+                </p>
+              )}
+            </ConversationContent>
+            <ConversationScrollButton />
           </Conversation>
         </div>
       )}

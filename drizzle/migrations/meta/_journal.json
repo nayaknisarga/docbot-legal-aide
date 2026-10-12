@@ -15,6 +15,13 @@
       "when": 1791804831804,
       "tag": "0001_uploaded_templates",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791820852484,
+      "tag": "0002_add_clause_research_sources",
+      "breakpoints": true
     }
   ]
 }
