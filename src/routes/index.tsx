@@ -15,9 +15,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Clausewell — Find the right legal document" },
-      { name: "description", content: "Describe your situation to find suitable legal document drafts, or browse Clausewell's template catalogue. Demo content is not lawyer-reviewed." },
+      {
+        name: "description",
+        content:
+          "Describe your situation to find suitable legal document drafts, or browse Clausewell's template catalogue. Demo content is not lawyer-reviewed.",
+      },
       { property: "og:title", content: "Clausewell — Find the right legal document" },
-      { property: "og:description", content: "Find document templates with a conversational assistant or browse by category. Drafts only, not legal advice." },
+      {
+        property: "og:description",
+        content:
+          "Find document templates with a conversational assistant or browse by category. Drafts only, not legal advice.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -39,12 +47,19 @@ function Index() {
   useEffect(() => {
     if (tab !== "mine") return;
     setMine(null);
-    list({ data: { ids: mySessionIds() } }).then(setMine).catch(() => { setMine([]); toast.error("Couldn't load your documents."); });
+    list({ data: { ids: mySessionIds() } })
+      .then(setMine)
+      .catch(() => {
+        setMine([]);
+        toast.error("Couldn't load your documents.");
+      });
   }, [tab, list]);
 
   const filtered = useMemo(() => {
     const t = q.trim().toLowerCase();
-    return t ? DOC_TYPES.filter((d) => (d.name + " " + d.shortDescription).toLowerCase().includes(t)) : DOC_TYPES;
+    return t
+      ? DOC_TYPES.filter((d) => (d.name + " " + d.shortDescription).toLowerCase().includes(t))
+      : DOC_TYPES;
   }, [q]);
 
   async function open(templateId: string) {
@@ -63,63 +78,116 @@ function Index() {
     <SiteShell>
       <DiscoveryChat onStart={open} opening={opening} />
       <section className="border-t border-border pt-10" aria-labelledby="browse-title">
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h2 id="browse-title" className="text-3xl text-primary">Or browse all templates</h2>
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 id="browse-title" className="text-3xl text-primary">
+              Or browse all templates
+            </h2>
+          </div>
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search templates"
+              className="pl-9"
+              aria-label="Search templates"
+            />
+          </div>
         </div>
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search templates" className="pl-9" aria-label="Search templates" />
-        </div>
-      </div>
 
-      <div className="mt-8 flex gap-6 border-b border-border" role="tablist">
-        {(["all", "mine"] as const).map((t) => (
-          <Button variant="ghost" key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
-            className={`-mb-px h-auto rounded-none border-b-2 px-0 pb-3 hover:bg-transparent hover:text-foreground ${tab === t ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground"}`}>
-            {t === "all" ? "All" : "Your documents"}
-          </Button>
-        ))}
-      </div>
-
-      {tab === "all" ? (
-        <div className="mt-8 space-y-12">
-          {CATEGORIES.map((c) => {
-            const docs = filtered.filter((d) => d.categories.includes(c.id));
-            if (!docs.length) return null;
-            return (
-              <section key={c.id}>
-                <h2 className="mb-4 text-xl">{c.name}</h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {docs.map((d) => (
-                     <Button variant="outline" key={c.id + d.id} onClick={() => open(d.id)} disabled={!!opening}
-                       className="group h-auto items-stretch justify-start whitespace-normal flex flex-col gap-0 rounded-lg border border-border bg-card p-5 text-left font-normal transition hover:border-primary hover:bg-card hover:text-foreground hover:shadow-sm disabled:opacity-60">
-                      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-primary">
-                        {opening === d.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
-                      </div>
-                      <span className="font-serif text-lg leading-snug">{d.name}</span>
-                      <span className="mt-1 flex-1 text-sm text-muted-foreground">{d.shortDescription}</span>
-                      <span className="mt-4 flex flex-wrap gap-2"><RiskBadge level={d.riskLevel} /><DemoBadge /><span className="text-xs text-muted-foreground">{d.jurisdiction.join(" · ")}</span></span>
-                     </Button>
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-          {!filtered.length && <p className="text-sm text-muted-foreground">No templates match "{q}". Try another word — or describe your need to the agent inside any template.</p>}
-        </div>
-      ) : (
-        <div className="mt-8 divide-y divide-border rounded-lg border border-border bg-card">
-          {mine === null && <p className="flex items-center gap-2 p-6 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</p>}
-          {mine?.length === 0 && <p className="p-6 text-sm text-muted-foreground">You haven't started any documents in this browser yet.</p>}
-          {mine?.map((s) => (
-            <Link key={s.id} to="/d/$sessionId" params={{ sessionId: s.id }} className="flex items-center justify-between p-4 hover:bg-muted/50">
-              <span className="font-serif text-lg">{getDocType(s.templateId)?.name ?? s.templateId}</span>
-              <span className="text-xs text-muted-foreground">{s.status} · {new Date(s.updatedAt).toLocaleString()}</span>
-            </Link>
+        <div className="mt-8 flex gap-6 border-b border-border" role="tablist">
+          {(["all", "mine"] as const).map((t) => (
+            <Button
+              variant="ghost"
+              key={t}
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              className={`-mb-px h-auto rounded-none border-b-2 px-0 pb-3 hover:bg-transparent hover:text-foreground ${tab === t ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground"}`}
+            >
+              {t === "all" ? "All" : "Your documents"}
+            </Button>
           ))}
         </div>
-      )}
+
+        {tab === "all" ? (
+          <div className="mt-8 space-y-12">
+            {CATEGORIES.map((c) => {
+              const docs = filtered.filter((d) => d.categories.includes(c.id));
+              if (!docs.length) return null;
+              return (
+                <section key={c.id}>
+                  <h2 className="mb-4 text-xl">{c.name}</h2>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {docs.map((d) => (
+                      <Button
+                        variant="outline"
+                        key={c.id + d.id}
+                        onClick={() => open(d.id)}
+                        disabled={!!opening}
+                        className="group h-auto items-stretch justify-start whitespace-normal flex flex-col gap-0 rounded-lg border border-border bg-card p-5 text-left font-normal transition hover:border-primary hover:bg-card hover:text-foreground hover:shadow-sm disabled:opacity-60"
+                      >
+                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-primary">
+                          {opening === d.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <FileText className="h-4 w-4" />
+                          )}
+                        </div>
+                        <span className="font-serif text-lg leading-snug">{d.name}</span>
+                        <span className="mt-1 flex-1 text-sm text-muted-foreground">
+                          {d.shortDescription}
+                        </span>
+                        <span className="mt-4 flex flex-wrap gap-2">
+                          <RiskBadge level={d.riskLevel} />
+                          <DemoBadge />
+                          <span className="text-xs text-muted-foreground">
+                            {d.jurisdiction.join(" · ")}
+                          </span>
+                        </span>
+                      </Button>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+            {!filtered.length && (
+              <p className="text-sm text-muted-foreground">
+                No templates match "{q}". Try another word — or describe your need to the agent
+                inside any template.
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="mt-8 divide-y divide-border rounded-lg border border-border bg-card">
+            {mine === null && (
+              <p className="flex items-center gap-2 p-6 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+              </p>
+            )}
+            {mine?.length === 0 && (
+              <p className="p-6 text-sm text-muted-foreground">
+                You haven't started any documents in this browser yet.
+              </p>
+            )}
+            {mine?.map((s) => (
+              <Link
+                key={s.id}
+                to="/d/$sessionId"
+                params={{ sessionId: s.id }}
+                className="flex items-center justify-between p-4 hover:bg-muted/50"
+              >
+                <span className="font-serif text-lg">
+                  {getDocType(s.templateId)?.name ?? s.templateId}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {s.status} · {new Date(s.updatedAt).toLocaleString()}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
       <p className="mt-16 text-center text-xs text-muted-foreground">{DISCLAIMER}</p>
     </SiteShell>

@@ -10,10 +10,12 @@ export function sanitizeRecommendations(input: unknown) {
   const parsed = RecommendationInput.safeParse(input);
   if (!parsed.success) return [];
   const seen = new Set<string>();
-  return parsed.data.recommendations.flatMap(({ templateId, reason }) => {
-    const doc = getDocType(templateId);
-    if (!doc || seen.has(templateId) || !reason.trim()) return [];
-    seen.add(templateId);
-    return [{ templateId, reason: reason.trim().replace(/\s+/g, " ").slice(0, 240) }];
-  }).slice(0, 3);
+  return parsed.data.recommendations
+    .flatMap(({ templateId, reason }) => {
+      const doc = getDocType(templateId);
+      if (!doc || seen.has(templateId) || !reason.trim()) return [];
+      seen.add(templateId);
+      return [{ templateId, reason: reason.trim().replace(/\s+/g, " ").slice(0, 240) }];
+    })
+    .slice(0, 3);
 }
