@@ -164,7 +164,7 @@ function Index() {
                   >
                     <span className="flex items-baseline gap-3">
                       <span className="font-serif text-lg">{c.name}</span>
-                      <span className="text-xs text-muted-foreground">{docs.length} templates</span>
+                      <span className="text-xs text-muted-foreground">{docs.length} {docs.length === 1 ? "template" : "templates"}</span>
                     </span>
                     <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
                   </button>
