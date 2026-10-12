@@ -77,34 +77,34 @@ function Index() {
   return (
     <SiteShell>
       <DiscoveryChat onStart={open} opening={opening} />
-      <section className="border-t border-border pt-10" aria-labelledby="browse-title">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <section className="border-t border-border pt-8" aria-labelledby="browse-title">
+        <div>
           <div>
-            <h2 id="browse-title" className="text-3xl text-primary">
+            <h2 id="browse-title" className="text-3xl text-primary sm:text-4xl">
               Or browse all templates
             </h2>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button asChild>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Button asChild className="h-11 px-5">
                 <Link to="/templates/upload">Upload your template</Link>
               </Button>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="h-11 bg-card px-5">
                 <Link to="/templates">Check your registered templates</Link>
               </Button>
             </div>
           </div>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative mt-4 w-full">
+            <Search className="absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search templates"
-              className="pl-9"
+              className="h-11 bg-card pl-11"
               aria-label="Search templates"
             />
           </div>
         </div>
 
-        <div className="mt-8 flex gap-6 border-b border-border" role="tablist">
+        <div className="mt-5 flex gap-6 border-b border-border" role="tablist">
           {(["all", "mine"] as const).map((t) => (
             <Button
               variant="ghost"
@@ -112,7 +112,7 @@ function Index() {
               role="tab"
               aria-selected={tab === t}
               onClick={() => setTab(t)}
-              className={`-mb-px h-auto rounded-none border-b-2 px-0 pb-3 hover:bg-transparent hover:text-foreground ${tab === t ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground"}`}
+              className={`-mb-px h-auto rounded-none border-b-2 px-0 pb-3 hover:bg-transparent hover:text-foreground ${tab === t ? "border-accent font-medium text-foreground" : "border-transparent text-muted-foreground"}`}
             >
               {t === "all" ? "All" : "Your documents"}
             </Button>
@@ -120,13 +120,13 @@ function Index() {
         </div>
 
         {tab === "all" ? (
-          <div className="mt-8 space-y-12">
+          <div className="mt-6 space-y-12">
             {CATEGORIES.map((c) => {
               const docs = filtered.filter((d) => d.categories.includes(c.id));
               if (!docs.length) return null;
               return (
                 <section key={c.id}>
-                  <h2 className="mb-4 text-xl">{c.name}</h2>
+                  <h2 className="mb-4 text-2xl">{c.name}</h2>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {docs.map((d) => (
                       <Button
@@ -134,7 +134,7 @@ function Index() {
                         key={c.id + d.id}
                         onClick={() => open(d.id)}
                         disabled={!!opening}
-                        className="group h-auto items-stretch justify-start whitespace-normal flex flex-col gap-0 rounded-lg border border-border bg-card p-5 text-left font-normal transition hover:border-primary hover:bg-card hover:text-foreground hover:shadow-sm disabled:opacity-60"
+                        className="group flex h-auto min-h-44 flex-col items-stretch justify-start gap-0 whitespace-normal rounded-lg border border-border bg-card p-5 text-left font-normal transition hover:border-primary hover:bg-card hover:text-foreground hover:shadow-sm disabled:opacity-60"
                       >
                         <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-primary">
                           {opening === d.id ? (

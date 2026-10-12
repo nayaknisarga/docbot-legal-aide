@@ -1,7 +1,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, isToolUIPart, type UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, ArrowUp, Diamond, FileText } from "lucide-react";
 import {
   Conversation,
   ConversationContent,
@@ -34,6 +34,13 @@ const greeting: UIMessage[] = [
   },
 ];
 
+const SUGGESTIONS = [
+  "NDA for a new vendor",
+  "Freelancer contract",
+  "Employment offer letter",
+  "Website terms of service",
+] as const;
+
 export function DiscoveryChat({
   onStart,
   opening,
@@ -46,6 +53,14 @@ export function DiscoveryChat({
   const [input, setInput] = useState("");
   const textarea = useRef<HTMLTextAreaElement>(null);
   const busy = status === "submitted" || status === "streaming";
+  const hasConversation = messages.length > 1;
+  const submitText = (text: string) => {
+    const value = text.trim();
+    if (busy || !value) return;
+    void sendMessage({ text: value });
+    setInput("");
+    textarea.current?.focus();
+  };
   useEffect(() => {
     if (
       !busy &&
@@ -59,25 +74,26 @@ export function DiscoveryChat({
   return (
     <section
       aria-labelledby="discovery-title"
-      className="mx-auto max-w-3xl pb-14 pt-5 sm:pb-20 sm:pt-10"
+      className="mx-auto max-w-4xl pb-12 pt-10 sm:pb-14 sm:pt-14"
       data-discovery-chat
     >
-      <div className="mb-8 text-center">
-        <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+      <div className="mb-7 text-center">
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           Clausewell assistant
         </span>
         <h1
           id="discovery-title"
-          className="mx-auto mt-3 max-w-2xl text-4xl leading-tight text-primary sm:text-5xl"
+          className="mx-auto mt-4 max-w-2xl text-3xl leading-tight text-primary sm:text-4xl"
         >
           Describe what you need,
           <br className="hidden sm:block" /> and I’ll find the right document.
         </h1>
       </div>
-      <div className="overflow-hidden rounded-lg border border-border bg-card">
-        <Conversation className="h-[320px] sm:h-[360px]">
+      {hasConversation && (
+        <div className="mb-4 overflow-hidden rounded-lg border border-border bg-card">
+          <Conversation className="h-[300px] sm:h-[340px]">
           <ConversationContent className="gap-6 p-5 sm:p-7">
-            {messages.map((message) => (
+            {messages.slice(1).map((message) => (
               <Message key={message.id} from={message.role} className="max-w-full">
                 <MessageContent className="w-full group-[.is-user]:w-fit group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground">
                   {message.parts.map((part, i) => {
@@ -160,26 +176,26 @@ export function DiscoveryChat({
             )}
           </ConversationContent>
           <ConversationScrollButton />
-        </Conversation>
-        <div className="border-t border-border p-4 sm:p-5">
-          <PromptInput
-            onSubmit={({ text }) => {
-              if (busy || !text.trim()) return;
-              void sendMessage({ text: text.trim() });
-              setInput("");
-              textarea.current?.focus();
-            }}
-            maxFiles={0}
-          >
+          </Conversation>
+        </div>
+      )}
+      <div className="mx-auto max-w-3xl">
+        <PromptInput
+          onSubmit={({ text }) => submitText(text)}
+          maxFiles={0}
+          className="min-h-16 rounded-full border-border bg-card px-2 shadow-sm"
+        >
+          <div className="flex w-full items-center gap-2 pl-3">
+            <Diamond className="h-4 w-4 shrink-0 fill-primary text-primary" aria-hidden="true" />
             <PromptInputTextarea
               ref={textarea}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               aria-label="Describe your situation"
-              placeholder="I’m hiring a freelancer and want to protect my source code…"
-              className="min-h-20 px-4 text-sm"
+              placeholder="e.g. I’m hiring a freelancer and want to protect my source code"
+              className="min-h-14 flex-1 resize-none border-0 bg-transparent px-2 py-4 text-base shadow-none focus-visible:ring-0"
             />
-            <PromptInputFooter className="justify-end">
+            <PromptInputFooter className="w-auto shrink-0 p-0">
               <PromptInputSubmit
                 status={status}
                 onStop={() => {
@@ -187,10 +203,30 @@ export function DiscoveryChat({
                 }}
                 disabled={!busy && !input.trim()}
                 title={busy ? "Stop response" : "Send message"}
-              />
+                className="h-10 w-10 rounded-full"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </PromptInputSubmit>
             </PromptInputFooter>
-          </PromptInput>
-        </div>
+          </div>
+        </PromptInput>
+        {!hasConversation && (
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {SUGGESTIONS.map((suggestion) => (
+              <Button
+                key={suggestion}
+                type="button"
+                variant="secondary"
+                size="sm"
+                disabled={busy}
+                onClick={() => submitText(suggestion)}
+                className="rounded-full border border-border px-4 font-normal text-muted-foreground"
+              >
+                {suggestion}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
