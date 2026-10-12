@@ -183,6 +183,7 @@ export type Database = {
           note: string
           origin: string
           position: number
+          sources: Json
           template_id: string
           user_id: string
           verdict: string
@@ -197,6 +198,7 @@ export type Database = {
           note?: string
           origin?: string
           position: number
+          sources?: Json
           template_id: string
           user_id?: string
           verdict?: string
@@ -211,6 +213,7 @@ export type Database = {
           note?: string
           origin?: string
           position?: number
+          sources?: Json
           template_id?: string
           user_id?: string
           verdict?: string
