@@ -172,6 +172,101 @@ export type Database = {
           },
         ]
       }
+      template_clauses: {
+        Row: {
+          action: string
+          body: string
+          created_at: string
+          decision: string
+          heading: string
+          id: string
+          note: string
+          origin: string
+          position: number
+          template_id: string
+          user_id: string
+          verdict: string
+        }
+        Insert: {
+          action?: string
+          body: string
+          created_at?: string
+          decision?: string
+          heading?: string
+          id?: string
+          note?: string
+          origin?: string
+          position: number
+          template_id: string
+          user_id?: string
+          verdict?: string
+        }
+        Update: {
+          action?: string
+          body?: string
+          created_at?: string
+          decision?: string
+          heading?: string
+          id?: string
+          note?: string
+          origin?: string
+          position?: number
+          template_id?: string
+          user_id?: string
+          verdict?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_clauses_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "uploaded_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      uploaded_templates: {
+        Row: {
+          created_at: string
+          file_path: string
+          id: string
+          messages: Json
+          mime_type: string
+          name: string
+          original_text: string
+          stage: string
+          summary: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          id?: string
+          messages?: Json
+          mime_type: string
+          name: string
+          original_text?: string
+          stage?: string
+          summary?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          id?: string
+          messages?: Json
+          mime_type?: string
+          name?: string
+          original_text?: string
+          stage?: string
+          summary?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
