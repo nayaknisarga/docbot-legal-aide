@@ -1,0 +1,3 @@
+- [ ] Add single-session homepage discovery chat with secure AI recommendations.
+- [ ] Keep searchable category-grouped catalogue and existing document navigation.
+- [ ] Test recommendation limits, catalogue filtering, chat and navigation.
