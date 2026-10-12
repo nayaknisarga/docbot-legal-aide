@@ -59,7 +59,10 @@ function AuthPage() {
   return (
     <SiteShell>
       <div className="mx-auto max-w-sm py-10">
-        <h1 className="text-center text-3xl text-primary">{mode === "in" ? "Sign in" : "Create account"}</h1>
+        <Button variant="ghost" size="sm" className="-ml-2 text-muted-foreground" onClick={() => navigate({ to: "/" })}>
+          ← Back to home
+        </Button>
+        <h1 className="mt-4 text-center text-3xl text-primary">{mode === "in" ? "Sign in" : "Create account"}</h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">Your uploaded templates stay private to your account.</p>
         <Button variant="outline" className="mt-8 w-full" onClick={google}>Continue with Google</Button>
         <div className="my-6 text-center text-xs text-muted-foreground">or</div>
