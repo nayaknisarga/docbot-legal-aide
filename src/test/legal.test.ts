@@ -9,7 +9,7 @@ const base: Answers = {
 };
 
 describe("catalogue", () => {
-  it("loads all 5 templates from template_definitions.json", () => {
+  it("loads templates from template_definitions.json", () => {
     expect(questionsFor(nda)[0]?.fieldId).toBe("jurisdiction");
     expect(getDocType("terms-of-service")).toBeDefined();
   });
@@ -43,7 +43,7 @@ describe("jurisdiction guard", () => {
   it("marks non-compete under Indian law unsupported with the s.27 warning", () => {
     const v = validateAll(getDocType("non-compete")!, { jurisdiction: "India" });
     expect(v.jurisdiction.supported).toBe(false);
-    expect(v.jurisdiction.warning).toMatch(/Section 27/);
+    expect(v.jurisdiction.warning).toMatch(/s\.27|Section 27/);
   });
   it("marks UK unsupported everywhere", () => {
     expect(validateAll(nda, { jurisdiction: "United Kingdom" }).jurisdiction.supported).toBe(false);

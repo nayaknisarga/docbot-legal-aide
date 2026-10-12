@@ -1,134 +1,1689 @@
 {
-  "schemaVersion": "1.0",
-  "description": "Master definition the webapp reads to know, for every template, all the questions to ask the user. Frontend grid + questionnaire + document preview are all driven by this file.",
-  "jurisdictionsSupported": ["IN", "US"],
+  "schemaVersion": "1.1",
+  "description": "Full template catalogue the webapp reads to know every template and all its questions. Powers the template grid + the AI questionnaire + the live draft preview.",
+  "jurisdictionsSupported": [
+    "IN",
+    "US"
+  ],
   "disclaimer": "All content is a demo draft, not legal advice, and is not lawyer-reviewed. Must be reviewed for the chosen jurisdiction before real use.",
-
-  "answerTypes": ["text", "long_text", "number", "money", "date", "boolean", "select", "multiselect", "party"],
-
+  "answerTypes": [
+    "text",
+    "long_text",
+    "number",
+    "money",
+    "date",
+    "boolean",
+    "select",
+    "multiselect"
+  ],
   "commonQuestions": [
-    { "fieldId": "jurisdiction", "label": "Which country/state's law applies?", "helpText": "The law that governs this document and where disputes are settled.", "answerType": "select", "required": true, "options": ["India", "US - Delaware", "US - California", "United Kingdom"], "mapsTo": "{{jurisdiction}}", "sensitivity": "low" },
-    { "fieldId": "effective_date", "label": "What date should the document take effect?", "helpText": "Usually today or the signing date.", "answerType": "date", "required": true, "mapsTo": "{{date}}", "sensitivity": "low" },
-    { "fieldId": "party_a_name", "label": "First party's full legal name", "helpText": "Company name (with entity type, e.g. Pvt Ltd) or individual's full name.", "answerType": "text", "required": true, "mapsTo": "{{party_a_name}}", "sensitivity": "low" },
-    { "fieldId": "party_a_address", "label": "First party's address", "answerType": "long_text", "required": true, "mapsTo": "{{party_a_address}}", "sensitivity": "medium" },
-    { "fieldId": "party_a_signatory", "label": "Who signs for the first party?", "helpText": "Name and title of the person signing.", "answerType": "text", "required": true, "mapsTo": "{{party_a_signatory}}", "sensitivity": "low" },
-    { "fieldId": "party_b_name", "label": "Second party's full legal name", "answerType": "text", "required": true, "mapsTo": "{{party_b_name}}", "sensitivity": "low" },
-    { "fieldId": "party_b_address", "label": "Second party's address", "answerType": "long_text", "required": true, "mapsTo": "{{party_b_address}}", "sensitivity": "medium" },
-    { "fieldId": "party_b_signatory", "label": "Who signs for the second party?", "answerType": "text", "required": true, "mapsTo": "{{party_b_signatory}}", "sensitivity": "low" }
-  ],
-
-  "categories": [
-    { "id": "freelancing", "name": "Freelancing & professional services" },
-    { "id": "business", "name": "Business & corporate" },
-    { "id": "employment", "name": "Employment & HR" },
-    { "id": "technology", "name": "Technology, IP & digital" }
-  ],
-
-  "documentTypes": [
     {
-      "id": "nda-mutual",
-      "name": "Mutual NDA (Non-Disclosure Agreement)",
-      "shortDescription": "Both parties protect each other's confidential information.",
-      "categories": ["business", "technology"],
-      "jurisdiction": ["IN", "US"],
-      "riskLevel": "low",
-      "placeholderTemplate": "01-mutual-general.md",
-      "usesCommonQuestions": ["jurisdiction", "effective_date", "party_a_name", "party_a_address", "party_a_signatory", "party_b_name", "party_b_address", "party_b_signatory"],
-      "questions": [
-        { "fieldId": "purpose", "label": "What are the parties working on together?", "helpText": "e.g. exploring a partnership, a pilot project. This becomes the allowed 'Purpose'.", "answerType": "long_text", "required": true, "mapsTo": "{{purpose}}", "sensitivity": "low" },
-        { "fieldId": "term_years", "label": "How many years should the agreement last?", "answerType": "number", "required": true, "default": 2, "mapsTo": "{{term}}", "sensitivity": "low" },
-        { "fieldId": "survival_years", "label": "How long must information stay confidential after it ends?", "helpText": "Commonly 2-5 years.", "answerType": "number", "required": true, "default": 3, "mapsTo": "{{survival}}", "sensitivity": "low" }
-      ]
+      "fieldId": "jurisdiction",
+      "label": "Which country/state's law applies?",
+      "helpText": "The law that governs this document and where disputes are settled.",
+      "answerType": "select",
+      "required": true,
+      "options": [
+        "India",
+        "US - Delaware",
+        "US - California",
+        "United Kingdom"
+      ],
+      "mapsTo": "{{jurisdiction}}",
+      "sensitivity": "low"
     },
-
+    {
+      "fieldId": "effective_date",
+      "label": "What date should the document take effect?",
+      "helpText": "Usually today or the signing date.",
+      "answerType": "date",
+      "required": true,
+      "mapsTo": "{{date}}",
+      "sensitivity": "low"
+    },
+    {
+      "fieldId": "party_a_name",
+      "label": "First party's full legal name",
+      "helpText": "Company name (with entity type, e.g. Pvt Ltd) or individual's full name.",
+      "answerType": "text",
+      "required": true,
+      "mapsTo": "{{party_a_name}}",
+      "sensitivity": "low"
+    },
+    {
+      "fieldId": "party_a_address",
+      "label": "First party's address",
+      "answerType": "long_text",
+      "required": true,
+      "mapsTo": "{{party_a_address}}",
+      "sensitivity": "medium"
+    },
+    {
+      "fieldId": "party_a_signatory",
+      "label": "Who signs for the first party?",
+      "helpText": "Name and title of the person signing.",
+      "answerType": "text",
+      "required": true,
+      "mapsTo": "{{party_a_signatory}}",
+      "sensitivity": "low"
+    },
+    {
+      "fieldId": "party_b_name",
+      "label": "Second party's full legal name",
+      "answerType": "text",
+      "required": true,
+      "mapsTo": "{{party_b_name}}",
+      "sensitivity": "low"
+    },
+    {
+      "fieldId": "party_b_address",
+      "label": "Second party's address",
+      "answerType": "long_text",
+      "required": true,
+      "mapsTo": "{{party_b_address}}",
+      "sensitivity": "medium"
+    },
+    {
+      "fieldId": "party_b_signatory",
+      "label": "Who signs for the second party?",
+      "answerType": "text",
+      "required": true,
+      "mapsTo": "{{party_b_signatory}}",
+      "sensitivity": "low"
+    }
+  ],
+  "categories": [
+    {
+      "id": "freelancing",
+      "name": "Freelancing & professional services"
+    },
+    {
+      "id": "business",
+      "name": "Business & corporate"
+    },
+    {
+      "id": "employment",
+      "name": "Employment & HR"
+    },
+    {
+      "id": "technology",
+      "name": "Technology, IP & digital"
+    },
+    {
+      "id": "finance",
+      "name": "Finance, sales & commercial"
+    },
+    {
+      "id": "realestate",
+      "name": "Real estate & property"
+    },
+    {
+      "id": "personal",
+      "name": "Family, personal & general"
+    },
+    {
+      "id": "disputes",
+      "name": "Disputes, claims & notices"
+    },
+    {
+      "id": "privacy",
+      "name": "Privacy & compliance"
+    }
+  ],
+  "documentTypes": [
     {
       "id": "independent-contractor",
       "name": "Independent Contractor Agreement",
       "shortDescription": "Engage a freelancer or contractor for a defined scope.",
-      "categories": ["freelancing"],
-      "jurisdiction": ["IN", "US"],
+      "categories": [
+        "freelancing"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
       "riskLevel": "medium",
       "placeholderTemplate": "06-freelancer.md",
-      "usesCommonQuestions": ["jurisdiction", "effective_date", "party_a_name", "party_a_address", "party_a_signatory", "party_b_name", "party_b_address", "party_b_signatory"],
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
       "questions": [
-        { "fieldId": "services_description", "label": "What work will the contractor do?", "answerType": "long_text", "required": true, "mapsTo": "{{project}}", "sensitivity": "low" },
-        { "fieldId": "fee_amount", "label": "What is the fee?", "answerType": "money", "required": true, "mapsTo": "{{fee}}", "sensitivity": "medium" },
-        { "fieldId": "payment_schedule", "label": "How is the fee paid?", "answerType": "select", "required": true, "options": ["One lump sum", "Milestone-based", "Monthly", "Hourly"], "mapsTo": "{{payment_schedule}}", "sensitivity": "low" },
-        { "fieldId": "creates_ip", "label": "Will the contractor create work/IP (code, designs, content)?", "answerType": "boolean", "required": true, "sensitivity": "low" },
-        { "fieldId": "ip_ownership", "label": "Who owns the created work?", "answerType": "select", "required": true, "options": ["Client owns everything on payment", "Contractor keeps ownership, licenses to client", "Shared / custom"], "visibleWhen": { "fieldId": "creates_ip", "equals": true }, "mapsTo": "{{ip_terms}}", "sensitivity": "low" },
-        { "fieldId": "has_confidentiality", "label": "Include a confidentiality clause?", "answerType": "boolean", "required": true, "default": true, "sensitivity": "low" },
-        { "fieldId": "survival_years", "label": "Confidentiality lasts how many years after the work ends?", "answerType": "number", "required": true, "default": 2, "visibleWhen": { "fieldId": "has_confidentiality", "equals": true }, "mapsTo": "{{survival}}", "sensitivity": "low" }
+        {
+          "fieldId": "services_description",
+          "label": "What work will the contractor do?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{project}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "fee_amount",
+          "label": "What is the fee?",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{fee}}",
+          "sensitivity": "medium"
+        },
+        {
+          "fieldId": "payment_schedule",
+          "label": "How is the fee paid?",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "One lump sum",
+            "Milestone-based",
+            "Monthly",
+            "Hourly"
+          ],
+          "mapsTo": "{{payment_schedule}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "creates_ip",
+          "label": "Will the contractor create work/IP (code, designs, content)?",
+          "answerType": "boolean",
+          "required": true,
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "ip_ownership",
+          "label": "Who owns the created work?",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "Client owns everything on payment",
+            "Contractor keeps ownership, licenses to client",
+            "Shared / custom"
+          ],
+          "visibleWhen": {
+            "fieldId": "creates_ip",
+            "equals": true
+          },
+          "mapsTo": "{{ip_terms}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "has_confidentiality",
+          "label": "Include a confidentiality clause?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true,
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "survival_years",
+          "label": "Confidentiality lasts how many years after the work ends?",
+          "answerType": "number",
+          "required": true,
+          "default": 2,
+          "visibleWhen": {
+            "fieldId": "has_confidentiality",
+            "equals": true
+          },
+          "mapsTo": "{{survival}}",
+          "sensitivity": "low"
+        }
       ]
     },
-
     {
-      "id": "employment-offer",
-      "name": "Employment Offer Letter",
-      "shortDescription": "Short-form letter outlining employment terms.",
-      "categories": ["employment"],
-      "jurisdiction": ["IN", "US"],
-      "riskLevel": "medium",
-      "placeholderTemplate": "03-employee.md",
-      "usesCommonQuestions": ["jurisdiction", "effective_date", "party_a_name", "party_a_signatory"],
+      "id": "scope-of-work",
+      "name": "Scope of Work (SOW)",
+      "shortDescription": "Define deliverables, timeline and milestones.",
+      "categories": [
+        "freelancing"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "low",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
       "questions": [
-        { "fieldId": "employee_name", "label": "Employee's full name", "answerType": "text", "required": true, "mapsTo": "{{employee_name}}", "sensitivity": "low" },
-        { "fieldId": "job_title", "label": "Job title", "answerType": "text", "required": true, "mapsTo": "{{job_title}}", "sensitivity": "low" },
-        { "fieldId": "start_date", "label": "Start date", "answerType": "date", "required": true, "mapsTo": "{{start_date}}", "sensitivity": "low", "validation": { "notBefore": "today" } },
-        { "fieldId": "salary", "label": "Annual salary / CTC", "answerType": "money", "required": true, "mapsTo": "{{salary}}", "sensitivity": "high" },
-        { "fieldId": "employment_type", "label": "Employment type", "answerType": "select", "required": true, "options": ["Full-time", "Part-time", "Fixed-term"], "mapsTo": "{{employment_type}}", "sensitivity": "low" },
-        { "fieldId": "probation_months", "label": "Probation period (months)?", "answerType": "number", "required": false, "default": 3, "mapsTo": "{{probation}}", "sensitivity": "low" },
-        { "fieldId": "nonsolicit_months", "label": "Non-solicitation period after leaving (months)?", "answerType": "number", "required": false, "default": 6, "mapsTo": "{{nonsolicit}}", "sensitivity": "low" }
+        {
+          "fieldId": "project_title",
+          "label": "Project title",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{project_title}}"
+        },
+        {
+          "fieldId": "deliverables",
+          "label": "List the deliverables",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{deliverables}}"
+        },
+        {
+          "fieldId": "start_date",
+          "label": "Start date",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{start_date}}"
+        },
+        {
+          "fieldId": "end_date",
+          "label": "Target completion date",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{end_date}}"
+        },
+        {
+          "fieldId": "milestones",
+          "label": "Any milestones / phases?",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{milestones}}"
+        },
+        {
+          "fieldId": "total_fee",
+          "label": "Total fee",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{total_fee}}"
+        }
       ]
     },
-
+    {
+      "id": "consulting-agreement",
+      "name": "Consulting Agreement",
+      "shortDescription": "Engage an advisor or consultant.",
+      "categories": [
+        "freelancing",
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "engagement",
+          "label": "What advisory services?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{engagement}}"
+        },
+        {
+          "fieldId": "fee",
+          "label": "Fee / retainer",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{fee}}"
+        },
+        {
+          "fieldId": "duration_months",
+          "label": "Engagement length (months)",
+          "answerType": "number",
+          "required": true,
+          "mapsTo": "{{duration}}"
+        },
+        {
+          "fieldId": "has_confidentiality",
+          "label": "Include confidentiality?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "nda-mutual",
+      "name": "Mutual NDA (Non-Disclosure Agreement)",
+      "shortDescription": "Both parties protect each other's confidential information.",
+      "categories": [
+        "business",
+        "technology"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "low",
+      "placeholderTemplate": "01-mutual-general.md",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "purpose",
+          "label": "What are the parties working on together?",
+          "helpText": "e.g. exploring a partnership, a pilot project. This becomes the allowed 'Purpose'.",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{purpose}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "term_years",
+          "label": "How many years should the agreement last?",
+          "answerType": "number",
+          "required": true,
+          "default": 2,
+          "mapsTo": "{{term}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "survival_years",
+          "label": "How long must information stay confidential after it ends?",
+          "helpText": "Commonly 2-5 years.",
+          "answerType": "number",
+          "required": true,
+          "default": 3,
+          "mapsTo": "{{survival}}",
+          "sensitivity": "low"
+        }
+      ]
+    },
+    {
+      "id": "nda-oneway",
+      "name": "One-Way NDA",
+      "shortDescription": "One side shares secrets, the other receives.",
+      "categories": [
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "low",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "subject",
+          "label": "What information is being shared?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{subject}}"
+        },
+        {
+          "fieldId": "purpose",
+          "label": "Why is it being shared?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{purpose}}"
+        },
+        {
+          "fieldId": "survival_years",
+          "label": "Confidential for how many years?",
+          "answerType": "number",
+          "required": true,
+          "default": 3,
+          "mapsTo": "{{survival}}"
+        }
+      ]
+    },
+    {
+      "id": "vendor-agreement",
+      "name": "Vendor / Supplier Agreement",
+      "shortDescription": "Supply terms, pricing and confidentiality.",
+      "categories": [
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "goods_services",
+          "label": "What goods or services are supplied?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{goods_services}}"
+        },
+        {
+          "fieldId": "pricing",
+          "label": "Pricing / rate",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{pricing}}"
+        },
+        {
+          "fieldId": "term_years",
+          "label": "Contract length (years)",
+          "answerType": "number",
+          "required": true,
+          "default": 1,
+          "mapsTo": "{{term}}"
+        },
+        {
+          "fieldId": "payment_terms",
+          "label": "Payment terms",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "On delivery",
+            "Net 15",
+            "Net 30",
+            "Net 60"
+          ],
+          "mapsTo": "{{payment_terms}}"
+        }
+      ]
+    },
     {
       "id": "non-compete",
       "name": "Non-Competition Agreement (NCA)",
       "shortDescription": "Restricts a person from competing with the company.",
-      "categories": ["employment", "business"],
-      "jurisdiction": ["US"],
+      "categories": [
+        "employment",
+        "business"
+      ],
+      "jurisdiction": [
+        "US"
+      ],
       "riskLevel": "high",
       "placeholderTemplate": null,
       "jurisdictionWarnings": {
         "IN": "Post-employment non-compete clauses are generally UNENFORCEABLE in India under Section 27 of the Indian Contract Act, 1872. Flag for legal review; do not present as enforceable."
       },
-      "usesCommonQuestions": ["jurisdiction", "effective_date", "party_a_name", "party_b_name"],
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_b_name"
+      ],
       "questions": [
-        { "fieldId": "restricted_activity", "label": "What competing activity is restricted?", "answerType": "long_text", "required": true, "mapsTo": "{{restricted_activity}}", "sensitivity": "low" },
-        { "fieldId": "geographic_scope", "label": "In what geographic area?", "answerType": "text", "required": true, "mapsTo": "{{geo_scope}}", "sensitivity": "low" },
-        { "fieldId": "duration_months", "label": "For how long (months)?", "answerType": "number", "required": true, "mapsTo": "{{duration}}", "sensitivity": "low" }
+        {
+          "fieldId": "restricted_activity",
+          "label": "What competing activity is restricted?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{restricted_activity}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "geographic_scope",
+          "label": "In what geographic area?",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{geo_scope}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "duration_months",
+          "label": "For how long (months)?",
+          "answerType": "number",
+          "required": true,
+          "mapsTo": "{{duration}}",
+          "sensitivity": "low"
+        }
       ]
     },
-
+    {
+      "id": "partnership-agreement",
+      "name": "Partnership Agreement",
+      "shortDescription": "Set terms between business partners.",
+      "categories": [
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "high",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "business_name",
+          "label": "Business / firm name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{business_name}}"
+        },
+        {
+          "fieldId": "capital_split",
+          "label": "How is capital contributed?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{capital_split}}"
+        },
+        {
+          "fieldId": "profit_split",
+          "label": "How are profits/losses shared?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{profit_split}}"
+        },
+        {
+          "fieldId": "roles",
+          "label": "Each partner's role/responsibilities",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{roles}}"
+        },
+        {
+          "fieldId": "exit_terms",
+          "label": "What happens if a partner exits?",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{exit_terms}}"
+        }
+      ]
+    },
+    {
+      "id": "founders-agreement",
+      "name": "Founders' Agreement",
+      "shortDescription": "Equity, roles and vesting between co-founders.",
+      "categories": [
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "high",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "company_name",
+          "label": "Company name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{company_name}}"
+        },
+        {
+          "fieldId": "equity_split",
+          "label": "Equity split between founders",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{equity_split}}"
+        },
+        {
+          "fieldId": "vesting",
+          "label": "Vesting schedule",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "4 years, 1-year cliff",
+            "3 years, no cliff",
+            "Custom"
+          ],
+          "mapsTo": "{{vesting}}"
+        },
+        {
+          "fieldId": "roles",
+          "label": "Founder roles",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{roles}}"
+        }
+      ]
+    },
+    {
+      "id": "employment-offer",
+      "name": "Employment Offer Letter",
+      "shortDescription": "Short-form letter outlining employment terms.",
+      "categories": [
+        "employment"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "placeholderTemplate": "03-employee.md",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "employee_name",
+          "label": "Employee's full name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{employee_name}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "job_title",
+          "label": "Job title",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{job_title}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "start_date",
+          "label": "Start date",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{start_date}}",
+          "sensitivity": "low",
+          "validation": {
+            "notBefore": "today"
+          }
+        },
+        {
+          "fieldId": "salary",
+          "label": "Annual salary / CTC",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{salary}}",
+          "sensitivity": "high"
+        },
+        {
+          "fieldId": "employment_type",
+          "label": "Employment type",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "Full-time",
+            "Part-time",
+            "Fixed-term"
+          ],
+          "mapsTo": "{{employment_type}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "probation_months",
+          "label": "Probation period (months)?",
+          "answerType": "number",
+          "required": false,
+          "default": 3,
+          "mapsTo": "{{probation}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "nonsolicit_months",
+          "label": "Non-solicitation period after leaving (months)?",
+          "answerType": "number",
+          "required": false,
+          "default": 6,
+          "mapsTo": "{{nonsolicit}}",
+          "sensitivity": "low"
+        }
+      ]
+    },
+    {
+      "id": "employment-agreement",
+      "name": "Employment Agreement",
+      "shortDescription": "Full employment contract with terms and policies.",
+      "categories": [
+        "employment"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "employee_name",
+          "label": "Employee's full name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{employee_name}}"
+        },
+        {
+          "fieldId": "job_title",
+          "label": "Job title",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{job_title}}"
+        },
+        {
+          "fieldId": "salary",
+          "label": "Salary / CTC",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{salary}}"
+        },
+        {
+          "fieldId": "working_hours",
+          "label": "Working hours / days",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{working_hours}}"
+        },
+        {
+          "fieldId": "notice_period",
+          "label": "Notice period",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "15 days",
+            "1 month",
+            "2 months",
+            "3 months"
+          ],
+          "mapsTo": "{{notice_period}}"
+        },
+        {
+          "fieldId": "has_confidentiality",
+          "label": "Include confidentiality + IP clause?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "internship-agreement",
+      "name": "Internship Agreement",
+      "shortDescription": "Terms for an intern engagement.",
+      "categories": [
+        "employment"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "low",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "intern_name",
+          "label": "Intern's full name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{intern_name}}"
+        },
+        {
+          "fieldId": "role",
+          "label": "Internship role / area",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{role}}"
+        },
+        {
+          "fieldId": "stipend",
+          "label": "Stipend (if any)",
+          "answerType": "money",
+          "required": false,
+          "mapsTo": "{{stipend}}"
+        },
+        {
+          "fieldId": "duration_months",
+          "label": "Duration (months)",
+          "answerType": "number",
+          "required": true,
+          "mapsTo": "{{duration}}"
+        },
+        {
+          "fieldId": "is_paid",
+          "label": "Is it paid?",
+          "answerType": "boolean",
+          "required": true
+        }
+      ]
+    },
     {
       "id": "terms-of-service",
       "name": "Terms of Service (Website)",
       "shortDescription": "Generic terms of service for a website or app.",
-      "categories": ["technology", "business"],
-      "jurisdiction": ["IN", "US"],
+      "categories": [
+        "technology",
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
       "riskLevel": "medium",
       "placeholderTemplate": null,
-      "usesCommonQuestions": ["jurisdiction", "effective_date"],
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date"
+      ],
       "questions": [
-        { "fieldId": "company_name", "label": "Company / website owner legal name", "answerType": "text", "required": true, "mapsTo": "{{company_name}}", "sensitivity": "low" },
-        { "fieldId": "website_url", "label": "Website or app URL", "answerType": "text", "required": true, "mapsTo": "{{website_url}}", "sensitivity": "low" },
-        { "fieldId": "service_description", "label": "What does the service do?", "answerType": "long_text", "required": true, "mapsTo": "{{service_description}}", "sensitivity": "low" },
-        { "fieldId": "has_accounts", "label": "Do users create accounts?", "answerType": "boolean", "required": true, "default": true, "sensitivity": "low" },
-        { "fieldId": "has_payments", "label": "Do you charge users / take payments?", "answerType": "boolean", "required": true, "sensitivity": "low" },
-        { "fieldId": "refund_policy", "label": "Describe your refund policy", "answerType": "long_text", "required": true, "visibleWhen": { "fieldId": "has_payments", "equals": true }, "mapsTo": "{{refund_policy}}", "sensitivity": "low" },
-        { "fieldId": "collects_personal_data", "label": "Do you collect personal data?", "answerType": "boolean", "required": true, "default": true, "sensitivity": "low" },
-        { "fieldId": "contact_email", "label": "Contact email for legal notices", "answerType": "text", "required": true, "mapsTo": "{{contact_email}}", "sensitivity": "low" }
+        {
+          "fieldId": "company_name",
+          "label": "Company / website owner legal name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{company_name}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "website_url",
+          "label": "Website or app URL",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{website_url}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "service_description",
+          "label": "What does the service do?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{service_description}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "has_accounts",
+          "label": "Do users create accounts?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true,
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "has_payments",
+          "label": "Do you charge users / take payments?",
+          "answerType": "boolean",
+          "required": true,
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "refund_policy",
+          "label": "Describe your refund policy",
+          "answerType": "long_text",
+          "required": true,
+          "visibleWhen": {
+            "fieldId": "has_payments",
+            "equals": true
+          },
+          "mapsTo": "{{refund_policy}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "collects_personal_data",
+          "label": "Do you collect personal data?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true,
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "contact_email",
+          "label": "Contact email for legal notices",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{contact_email}}",
+          "sensitivity": "low"
+        }
+      ]
+    },
+    {
+      "id": "privacy-policy",
+      "name": "Privacy Policy",
+      "shortDescription": "How you collect and use personal data.",
+      "categories": [
+        "technology",
+        "privacy"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date"
+      ],
+      "questions": [
+        {
+          "fieldId": "company_name",
+          "label": "Company name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{company_name}}"
+        },
+        {
+          "fieldId": "data_collected",
+          "label": "What personal data do you collect?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{data_collected}}"
+        },
+        {
+          "fieldId": "data_use",
+          "label": "How is it used?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{data_use}}"
+        },
+        {
+          "fieldId": "shares_third_party",
+          "label": "Do you share data with third parties?",
+          "answerType": "boolean",
+          "required": true
+        },
+        {
+          "fieldId": "contact_email",
+          "label": "Privacy contact email",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{contact_email}}"
+        }
+      ]
+    },
+    {
+      "id": "software-license",
+      "name": "Software License Agreement",
+      "shortDescription": "License terms for software you provide.",
+      "categories": [
+        "technology"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "software_name",
+          "label": "Software / product name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{software_name}}"
+        },
+        {
+          "fieldId": "license_type",
+          "label": "License type",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "Perpetual",
+            "Subscription",
+            "Per-seat",
+            "Open-source"
+          ],
+          "mapsTo": "{{license_type}}"
+        },
+        {
+          "fieldId": "fee",
+          "label": "License fee",
+          "answerType": "money",
+          "required": false,
+          "mapsTo": "{{fee}}"
+        },
+        {
+          "fieldId": "restrictions",
+          "label": "Usage restrictions",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{restrictions}}"
+        }
+      ]
+    },
+    {
+      "id": "ip-assignment",
+      "name": "IP Assignment Agreement",
+      "shortDescription": "Transfer ownership of IP to the company.",
+      "categories": [
+        "technology",
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "ip_description",
+          "label": "What IP is being assigned?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{ip_description}}"
+        },
+        {
+          "fieldId": "consideration",
+          "label": "Consideration / payment",
+          "answerType": "money",
+          "required": false,
+          "mapsTo": "{{consideration}}"
+        }
+      ]
+    },
+    {
+      "id": "loan-agreement",
+      "name": "Loan Agreement",
+      "shortDescription": "Record a loan between two parties.",
+      "categories": [
+        "finance"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "principal",
+          "label": "Loan amount",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{principal}}"
+        },
+        {
+          "fieldId": "interest_rate",
+          "label": "Interest rate (% per year)",
+          "answerType": "number",
+          "required": true,
+          "mapsTo": "{{interest_rate}}"
+        },
+        {
+          "fieldId": "repayment_term",
+          "label": "Repayment period",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{repayment_term}}"
+        },
+        {
+          "fieldId": "repayment_schedule",
+          "label": "Repayment schedule",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "Monthly",
+            "Quarterly",
+            "Lump sum at end"
+          ],
+          "mapsTo": "{{repayment_schedule}}"
+        },
+        {
+          "fieldId": "collateral",
+          "label": "Any collateral?",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{collateral}}"
+        }
+      ]
+    },
+    {
+      "id": "invoice",
+      "name": "Invoice",
+      "shortDescription": "Bill a client for goods or services.",
+      "categories": [
+        "finance",
+        "freelancing"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "low",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "client_name",
+          "label": "Client name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{client_name}}"
+        },
+        {
+          "fieldId": "items",
+          "label": "Line items (description + amount)",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{items}}"
+        },
+        {
+          "fieldId": "total",
+          "label": "Total amount",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{total}}"
+        },
+        {
+          "fieldId": "due_date",
+          "label": "Payment due date",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{due_date}}"
+        },
+        {
+          "fieldId": "tax",
+          "label": "Include tax/GST?",
+          "answerType": "boolean",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "sales-agreement",
+      "name": "Sale of Goods Agreement",
+      "shortDescription": "Terms for selling goods.",
+      "categories": [
+        "finance",
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "goods",
+          "label": "What goods are sold?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{goods}}"
+        },
+        {
+          "fieldId": "price",
+          "label": "Price",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{price}}"
+        },
+        {
+          "fieldId": "delivery_terms",
+          "label": "Delivery terms",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{delivery_terms}}"
+        },
+        {
+          "fieldId": "warranty",
+          "label": "Any warranty?",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{warranty}}"
+        }
+      ]
+    },
+    {
+      "id": "rental-lease",
+      "name": "Residential Rental / Lease Agreement",
+      "shortDescription": "Rent a home or flat.",
+      "categories": [
+        "realestate"
+      ],
+      "jurisdiction": [
+        "IN"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "property_address",
+          "label": "Property address",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{property_address}}"
+        },
+        {
+          "fieldId": "rent",
+          "label": "Monthly rent",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{rent}}"
+        },
+        {
+          "fieldId": "deposit",
+          "label": "Security deposit",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{deposit}}"
+        },
+        {
+          "fieldId": "lease_term",
+          "label": "Lease term",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "11 months",
+            "1 year",
+            "2 years",
+            "3 years"
+          ],
+          "mapsTo": "{{lease_term}}"
+        },
+        {
+          "fieldId": "start_date",
+          "label": "Lease start date",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{start_date}}"
+        },
+        {
+          "fieldId": "notice_period",
+          "label": "Notice period to vacate",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "1 month",
+            "2 months",
+            "3 months"
+          ],
+          "mapsTo": "{{notice_period}}"
+        }
+      ],
+      "jurisdictionWarnings": {
+        "IN": "Leases over 11 months usually require registration and stamp duty in India — flag for the user."
+      }
+    },
+    {
+      "id": "rent-receipt",
+      "name": "Rent Receipt",
+      "shortDescription": "Proof of rent paid.",
+      "categories": [
+        "realestate",
+        "finance"
+      ],
+      "jurisdiction": [
+        "IN"
+      ],
+      "riskLevel": "low",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "tenant_name",
+          "label": "Tenant name",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{tenant_name}}"
+        },
+        {
+          "fieldId": "amount",
+          "label": "Rent amount paid",
+          "answerType": "money",
+          "required": true,
+          "mapsTo": "{{amount}}"
+        },
+        {
+          "fieldId": "month",
+          "label": "For which month?",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{month}}"
+        },
+        {
+          "fieldId": "property_address",
+          "label": "Property address",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{property_address}}"
+        }
+      ]
+    },
+    {
+      "id": "power-of-attorney",
+      "name": "Power of Attorney",
+      "shortDescription": "Authorize someone to act on your behalf.",
+      "categories": [
+        "personal"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "high",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "powers",
+          "label": "What powers are granted?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{powers}}"
+        },
+        {
+          "fieldId": "scope",
+          "label": "General or specific?",
+          "answerType": "select",
+          "required": true,
+          "options": [
+            "General",
+            "Specific"
+          ],
+          "mapsTo": "{{scope}}"
+        },
+        {
+          "fieldId": "duration",
+          "label": "Duration / until when?",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{duration}}"
+        }
+      ],
+      "jurisdictionWarnings": {
+        "IN": "A Power of Attorney often needs notarization/registration and sometimes stamp duty in India — flag for the user."
+      }
+    },
+    {
+      "id": "authorization-letter",
+      "name": "Authorization Letter",
+      "shortDescription": "Let someone collect/act on a specific thing for you.",
+      "categories": [
+        "personal"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "low",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "authorized_person",
+          "label": "Who are you authorizing?",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{authorized_person}}"
+        },
+        {
+          "fieldId": "task",
+          "label": "What are they authorized to do?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{task}}"
+        },
+        {
+          "fieldId": "valid_until",
+          "label": "Valid until",
+          "answerType": "date",
+          "required": false,
+          "mapsTo": "{{valid_until}}"
+        }
+      ]
+    },
+    {
+      "id": "affidavit",
+      "name": "Affidavit / Declaration",
+      "shortDescription": "A sworn written statement.",
+      "categories": [
+        "personal",
+        "disputes"
+      ],
+      "jurisdiction": [
+        "IN"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "declaration",
+          "label": "What are you declaring?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{declaration}}"
+        },
+        {
+          "fieldId": "purpose",
+          "label": "Purpose of this affidavit",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{purpose}}"
+        }
+      ],
+      "jurisdictionWarnings": {
+        "IN": "Affidavits usually need notarization and stamp paper in India — flag for the user."
+      }
+    },
+    {
+      "id": "demand-letter",
+      "name": "Demand / Legal Notice Letter",
+      "shortDescription": "Formally demand payment or action.",
+      "categories": [
+        "disputes"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "issue",
+          "label": "What is the issue / breach?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{issue}}"
+        },
+        {
+          "fieldId": "demand",
+          "label": "What are you demanding?",
+          "answerType": "long_text",
+          "required": true,
+          "mapsTo": "{{demand}}"
+        },
+        {
+          "fieldId": "deadline",
+          "label": "Response deadline",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{deadline}}"
+        },
+        {
+          "fieldId": "consequence",
+          "label": "Consequence if ignored",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{consequence}}"
+        }
+      ]
+    },
+    {
+      "id": "termination-notice",
+      "name": "Contract Termination Notice",
+      "shortDescription": "Formally end an existing agreement.",
+      "categories": [
+        "disputes",
+        "business"
+      ],
+      "jurisdiction": [
+        "IN",
+        "US"
+      ],
+      "riskLevel": "medium",
+      "usesCommonQuestions": [
+        "jurisdiction",
+        "effective_date",
+        "party_a_name",
+        "party_a_address",
+        "party_a_signatory",
+        "party_b_name",
+        "party_b_address",
+        "party_b_signatory"
+      ],
+      "questions": [
+        {
+          "fieldId": "contract_ref",
+          "label": "Which contract is being terminated?",
+          "answerType": "text",
+          "required": true,
+          "mapsTo": "{{contract_ref}}"
+        },
+        {
+          "fieldId": "reason",
+          "label": "Reason for termination",
+          "answerType": "long_text",
+          "required": false,
+          "mapsTo": "{{reason}}"
+        },
+        {
+          "fieldId": "effective_termination_date",
+          "label": "Termination effective date",
+          "answerType": "date",
+          "required": true,
+          "mapsTo": "{{termination_date}}"
+        }
       ]
     }
   ],
-
   "howTheAppUsesThis": {
-    "1_grid": "Render the template grid (reference image 1) from documentTypes[]: card title=name, subtitle=shortDescription, grouped by category.",
-    "2_questionnaire": "When a template is chosen, the questionnaire = its usesCommonQuestions (resolved from commonQuestions[]) + its own questions[], asked one at a time. Hide any question whose visibleWhen condition is not met.",
-    "3_reuse": "Answers are keyed by fieldId. Common fieldIds (e.g. party_a_name) carry across templates so the user is never asked twice.",
-    "4_validation": "Enforce required + validation rules server-side before generating. Block generation on missing/invalid fields.",
-    "5_generation": "Replace each mapsTo placeholder in placeholderTemplate with the matching answer. Then scan for any leftover {{...}} before showing the draft.",
-    "6_preview": "Live document preview (reference image 2, right pane) re-renders as answers come in; AI chat (left pane) explains clauses and proposes additions, which stay 'proposed' until the user approves.",
-    "7_jurisdiction_guard": "If a documentType has a jurisdictionWarning for the chosen jurisdiction, show it and flag for review; if the jurisdiction isn't in the documentType's jurisdiction[], mark UNSUPPORTED instead of generating."
+    "grid": "Render cards from documentTypes[], grouped by category.",
+    "questionnaire": "For a chosen template: usesCommonQuestions (from commonQuestions[]) + its questions[], asked one at a time by the AI agent. Hide any question whose visibleWhen isn't met.",
+    "reuse": "Answers keyed by fieldId; common fields carry across templates so the user isn't asked twice.",
+    "generation": "Replace each mapsTo placeholder, then scan for leftover {{...}} before showing the draft.",
+    "jurisdiction_guard": "Show jurisdictionWarnings for the chosen jurisdiction; if jurisdiction not in a doc's jurisdiction[], mark UNSUPPORTED."
   }
 }
