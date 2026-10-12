@@ -74,16 +74,16 @@ export function DiscoveryChat({
   return (
     <section
       aria-labelledby="discovery-title"
-      className="mx-auto max-w-4xl pb-12 pt-10 sm:pb-14 sm:pt-14"
+      className="mx-auto flex min-h-[470px] max-w-5xl flex-col justify-center pb-14 pt-8 sm:min-h-[510px] sm:pb-16 sm:pt-10"
       data-discovery-chat
     >
-      <div className="mb-7 text-center">
-        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+      <div className="mb-10 text-center sm:mb-12">
+        <span className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Clausewell assistant
         </span>
         <h1
           id="discovery-title"
-          className="mx-auto mt-4 max-w-2xl text-3xl leading-tight text-primary sm:text-4xl"
+          className="mx-auto mt-5 max-w-4xl text-4xl leading-[1.08] text-primary sm:text-6xl"
         >
           Describe what you need,
           <br className="hidden sm:block" /> and I’ll find the right document.
@@ -181,23 +181,26 @@ export function DiscoveryChat({
           </Conversation>
         </div>
       )}
-      <div className="mx-auto max-w-3xl">
-        <PromptInput
-          onSubmit={({ text }) => submitText(text)}
-          maxFiles={0}
-          className="min-h-16 rounded-full border-border bg-card px-2 shadow-sm"
-        >
-          <div className="flex w-full items-center gap-2 pl-3">
-            <Diamond className="h-4 w-4 shrink-0 fill-primary text-primary" aria-hidden="true" />
+      <div className="mx-auto w-full max-w-5xl">
+        <div className="relative">
+          <Diamond
+            className="pointer-events-none absolute left-6 top-1/2 z-10 h-5 w-5 -translate-y-1/2 fill-primary text-primary"
+            aria-hidden="true"
+          />
+          <PromptInput
+            onSubmit={({ text }) => submitText(text)}
+            maxFiles={0}
+            className="[&_[data-slot=input-group]]:min-h-16 [&_[data-slot=input-group]]:rounded-xl [&_[data-slot=input-group]]:border-border [&_[data-slot=input-group]]:bg-card [&_[data-slot=input-group]]:shadow-sm sm:[&_[data-slot=input-group]]:min-h-[72px]"
+          >
             <PromptInputTextarea
               ref={textarea}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               aria-label="Describe your situation"
               placeholder="e.g. I’m hiring a freelancer and want to protect my source code"
-              className="min-h-14 flex-1 resize-none border-0 bg-transparent px-2 py-4 text-base shadow-none focus-visible:ring-0"
+              className="min-h-16 resize-none border-0 bg-transparent py-5 pl-16 pr-20 text-base shadow-none focus-visible:ring-0 sm:min-h-[72px] sm:text-lg"
             />
-            <PromptInputFooter className="w-auto shrink-0 p-0">
+            <PromptInputFooter className="absolute inset-y-0 right-3 w-auto justify-center p-0">
               <PromptInputSubmit
                 status={status}
                 onStop={() => {
@@ -205,15 +208,15 @@ export function DiscoveryChat({
                 }}
                 disabled={!busy && !input.trim()}
                 title={busy ? "Stop response" : "Send message"}
-                className="h-10 w-10 rounded-full"
+                className="h-11 w-11 rounded-full sm:h-12 sm:w-12"
               >
-                <ArrowUp className="h-4 w-4" />
+                <ArrowUp className="h-5 w-5" />
               </PromptInputSubmit>
             </PromptInputFooter>
-          </div>
-        </PromptInput>
+          </PromptInput>
+        </div>
         {!hasConversation && (
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             {SUGGESTIONS.map((suggestion) => (
               <Button
                 key={suggestion}
@@ -222,7 +225,7 @@ export function DiscoveryChat({
                 size="sm"
                 disabled={busy}
                 onClick={() => submitText(suggestion)}
-                className="rounded-full border border-border px-4 font-normal text-muted-foreground"
+                className="h-11 rounded-full border border-border px-6 text-sm font-normal text-muted-foreground"
               >
                 {suggestion}
               </Button>
