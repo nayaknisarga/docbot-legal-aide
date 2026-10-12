@@ -20,7 +20,7 @@
     {
       "fieldId": "jurisdiction",
       "label": "Which country/state's law applies?",
-      "helpText": "Governs the document and where disputes are settled.",
+      "helpText": "The law that governs this document and where disputes are settled.",
       "answerType": "select",
       "required": true,
       "options": [
@@ -29,57 +29,67 @@
         "US - California",
         "United Kingdom"
       ],
-      "mapsTo": "{{jurisdiction}}"
+      "mapsTo": "{{jurisdiction}}",
+      "sensitivity": "low"
     },
     {
       "fieldId": "effective_date",
-      "label": "What date should it take effect?",
+      "label": "What date should the document take effect?",
+      "helpText": "Usually today or the signing date.",
       "answerType": "date",
       "required": true,
-      "mapsTo": "{{date}}"
+      "mapsTo": "{{date}}",
+      "sensitivity": "low"
     },
     {
       "fieldId": "party_a_name",
       "label": "First party's full legal name",
-      "helpText": "Company (with entity type) or individual.",
+      "helpText": "Company name (with entity type, e.g. Pvt Ltd) or individual's full name.",
       "answerType": "text",
       "required": true,
-      "mapsTo": "{{party_a_name}}"
+      "mapsTo": "{{party_a_name}}",
+      "sensitivity": "low"
     },
     {
       "fieldId": "party_a_address",
       "label": "First party's address",
       "answerType": "long_text",
       "required": true,
-      "mapsTo": "{{party_a_address}}"
+      "mapsTo": "{{party_a_address}}",
+      "sensitivity": "medium"
     },
     {
       "fieldId": "party_a_signatory",
       "label": "Who signs for the first party?",
+      "helpText": "Name and title of the person signing.",
       "answerType": "text",
       "required": true,
-      "mapsTo": "{{party_a_signatory}}"
+      "mapsTo": "{{party_a_signatory}}",
+      "sensitivity": "low"
     },
     {
       "fieldId": "party_b_name",
       "label": "Second party's full legal name",
       "answerType": "text",
       "required": true,
-      "mapsTo": "{{party_b_name}}"
+      "mapsTo": "{{party_b_name}}",
+      "sensitivity": "low"
     },
     {
       "fieldId": "party_b_address",
       "label": "Second party's address",
       "answerType": "long_text",
       "required": true,
-      "mapsTo": "{{party_b_address}}"
+      "mapsTo": "{{party_b_address}}",
+      "sensitivity": "medium"
     },
     {
       "fieldId": "party_b_signatory",
       "label": "Who signs for the second party?",
       "answerType": "text",
       "required": true,
-      "mapsTo": "{{party_b_signatory}}"
+      "mapsTo": "{{party_b_signatory}}",
+      "sensitivity": "low"
     }
   ],
   "categories": [
@@ -133,6 +143,7 @@
         "US"
       ],
       "riskLevel": "medium",
+      "placeholderTemplate": "06-freelancer.md",
       "usesCommonQuestions": [
         "jurisdiction",
         "effective_date",
@@ -145,18 +156,20 @@
       ],
       "questions": [
         {
-          "fieldId": "services",
+          "fieldId": "services_description",
           "label": "What work will the contractor do?",
           "answerType": "long_text",
           "required": true,
-          "mapsTo": "{{project}}"
+          "mapsTo": "{{project}}",
+          "sensitivity": "low"
         },
         {
-          "fieldId": "fee",
+          "fieldId": "fee_amount",
           "label": "What is the fee?",
           "answerType": "money",
           "required": true,
-          "mapsTo": "{{fee}}"
+          "mapsTo": "{{fee}}",
+          "sensitivity": "medium"
         },
         {
           "fieldId": "payment_schedule",
@@ -164,18 +177,20 @@
           "answerType": "select",
           "required": true,
           "options": [
-            "Lump sum",
+            "One lump sum",
             "Milestone-based",
             "Monthly",
             "Hourly"
           ],
-          "mapsTo": "{{payment_schedule}}"
+          "mapsTo": "{{payment_schedule}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "creates_ip",
-          "label": "Will the contractor create work/IP?",
+          "label": "Will the contractor create work/IP (code, designs, content)?",
           "answerType": "boolean",
-          "required": true
+          "required": true,
+          "sensitivity": "low"
         },
         {
           "fieldId": "ip_ownership",
@@ -183,23 +198,37 @@
           "answerType": "select",
           "required": true,
           "options": [
-            "Client owns on payment",
-            "Contractor licenses to client",
-            "Shared"
+            "Client owns everything on payment",
+            "Contractor keeps ownership, licenses to client",
+            "Shared / custom"
           ],
           "visibleWhen": {
             "fieldId": "creates_ip",
             "equals": true
           },
-          "mapsTo": "{{ip_terms}}"
+          "mapsTo": "{{ip_terms}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "has_confidentiality",
+          "label": "Include a confidentiality clause?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true,
+          "sensitivity": "low"
         },
         {
           "fieldId": "survival_years",
-          "label": "Confidentiality lasts how many years after?",
+          "label": "Confidentiality lasts how many years after the work ends?",
           "answerType": "number",
           "required": true,
           "default": 2,
-          "mapsTo": "{{survival}}"
+          "visibleWhen": {
+            "fieldId": "has_confidentiality",
+            "equals": true
+          },
+          "mapsTo": "{{survival}}",
+          "sensitivity": "low"
         }
       ]
     },
@@ -326,7 +355,7 @@
     },
     {
       "id": "nda-mutual",
-      "name": "Mutual NDA",
+      "name": "Mutual NDA (Non-Disclosure Agreement)",
       "shortDescription": "Both parties protect each other's confidential information.",
       "categories": [
         "business",
@@ -337,6 +366,7 @@
         "US"
       ],
       "riskLevel": "low",
+      "placeholderTemplate": "01-mutual-general.md",
       "usesCommonQuestions": [
         "jurisdiction",
         "effective_date",
@@ -351,25 +381,30 @@
         {
           "fieldId": "purpose",
           "label": "What are the parties working on together?",
+          "helpText": "e.g. exploring a partnership, a pilot project. This becomes the allowed 'Purpose'.",
           "answerType": "long_text",
           "required": true,
-          "mapsTo": "{{purpose}}"
+          "mapsTo": "{{purpose}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "term_years",
-          "label": "How many years should it last?",
+          "label": "How many years should the agreement last?",
           "answerType": "number",
           "required": true,
           "default": 2,
-          "mapsTo": "{{term}}"
+          "mapsTo": "{{term}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "survival_years",
-          "label": "How long must info stay confidential after?",
+          "label": "How long must information stay confidential after it ends?",
+          "helpText": "Commonly 2-5 years.",
           "answerType": "number",
           "required": true,
           "default": 3,
-          "mapsTo": "{{survival}}"
+          "mapsTo": "{{survival}}",
+          "sensitivity": "low"
         }
       ]
     },
@@ -485,13 +520,17 @@
       "name": "Non-Competition Agreement (NCA)",
       "shortDescription": "Restricts a person from competing with the company.",
       "categories": [
-        "business",
-        "employment"
+        "employment",
+        "business"
       ],
       "jurisdiction": [
         "US"
       ],
       "riskLevel": "high",
+      "placeholderTemplate": null,
+      "jurisdictionWarnings": {
+        "IN": "Post-employment non-compete clauses are generally UNENFORCEABLE in India under Section 27 of the Indian Contract Act, 1872. Flag for legal review; do not present as enforceable."
+      },
       "usesCommonQuestions": [
         "jurisdiction",
         "effective_date",
@@ -504,26 +543,26 @@
           "label": "What competing activity is restricted?",
           "answerType": "long_text",
           "required": true,
-          "mapsTo": "{{restricted_activity}}"
+          "mapsTo": "{{restricted_activity}}",
+          "sensitivity": "low"
         },
         {
-          "fieldId": "geo_scope",
+          "fieldId": "geographic_scope",
           "label": "In what geographic area?",
           "answerType": "text",
           "required": true,
-          "mapsTo": "{{geo_scope}}"
+          "mapsTo": "{{geo_scope}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "duration_months",
           "label": "For how long (months)?",
           "answerType": "number",
           "required": true,
-          "mapsTo": "{{duration}}"
+          "mapsTo": "{{duration}}",
+          "sensitivity": "low"
         }
-      ],
-      "jurisdictionWarnings": {
-        "IN": "Post-employment non-compete clauses are generally unenforceable in India (Contract Act s.27). Flag for legal review; do not present as enforceable."
-      }
+      ]
     },
     {
       "id": "partnership-agreement",
@@ -655,11 +694,11 @@
         "US"
       ],
       "riskLevel": "medium",
+      "placeholderTemplate": "03-employee.md",
       "usesCommonQuestions": [
         "jurisdiction",
         "effective_date",
         "party_a_name",
-        "party_a_address",
         "party_a_signatory"
       ],
       "questions": [
@@ -668,14 +707,16 @@
           "label": "Employee's full name",
           "answerType": "text",
           "required": true,
-          "mapsTo": "{{employee_name}}"
+          "mapsTo": "{{employee_name}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "job_title",
           "label": "Job title",
           "answerType": "text",
           "required": true,
-          "mapsTo": "{{job_title}}"
+          "mapsTo": "{{job_title}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "start_date",
@@ -683,6 +724,7 @@
           "answerType": "date",
           "required": true,
           "mapsTo": "{{start_date}}",
+          "sensitivity": "low",
           "validation": {
             "notBefore": "today"
           }
@@ -692,7 +734,8 @@
           "label": "Annual salary / CTC",
           "answerType": "money",
           "required": true,
-          "mapsTo": "{{salary}}"
+          "mapsTo": "{{salary}}",
+          "sensitivity": "high"
         },
         {
           "fieldId": "employment_type",
@@ -704,15 +747,26 @@
             "Part-time",
             "Fixed-term"
           ],
-          "mapsTo": "{{employment_type}}"
+          "mapsTo": "{{employment_type}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "probation_months",
-          "label": "Probation (months)?",
+          "label": "Probation period (months)?",
           "answerType": "number",
           "required": false,
           "default": 3,
-          "mapsTo": "{{probation}}"
+          "mapsTo": "{{probation}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "nonsolicit_months",
+          "label": "Non-solicitation period after leaving (months)?",
+          "answerType": "number",
+          "required": false,
+          "default": 6,
+          "mapsTo": "{{nonsolicit}}",
+          "sensitivity": "low"
         }
       ]
     },
@@ -855,6 +909,7 @@
         "US"
       ],
       "riskLevel": "medium",
+      "placeholderTemplate": null,
       "usesCommonQuestions": [
         "jurisdiction",
         "effective_date"
@@ -862,55 +917,70 @@
       "questions": [
         {
           "fieldId": "company_name",
-          "label": "Company / owner legal name",
+          "label": "Company / website owner legal name",
           "answerType": "text",
           "required": true,
-          "mapsTo": "{{company_name}}"
+          "mapsTo": "{{company_name}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "website_url",
           "label": "Website or app URL",
           "answerType": "text",
           "required": true,
-          "mapsTo": "{{website_url}}"
+          "mapsTo": "{{website_url}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "service_description",
           "label": "What does the service do?",
           "answerType": "long_text",
           "required": true,
-          "mapsTo": "{{service_description}}"
+          "mapsTo": "{{service_description}}",
+          "sensitivity": "low"
         },
         {
           "fieldId": "has_accounts",
           "label": "Do users create accounts?",
           "answerType": "boolean",
           "required": true,
-          "default": true
+          "default": true,
+          "sensitivity": "low"
         },
         {
           "fieldId": "has_payments",
-          "label": "Do you take payments?",
+          "label": "Do you charge users / take payments?",
           "answerType": "boolean",
-          "required": true
+          "required": true,
+          "sensitivity": "low"
         },
         {
           "fieldId": "refund_policy",
-          "label": "Describe refund policy",
+          "label": "Describe your refund policy",
           "answerType": "long_text",
           "required": true,
           "visibleWhen": {
             "fieldId": "has_payments",
             "equals": true
           },
-          "mapsTo": "{{refund_policy}}"
+          "mapsTo": "{{refund_policy}}",
+          "sensitivity": "low"
+        },
+        {
+          "fieldId": "collects_personal_data",
+          "label": "Do you collect personal data?",
+          "answerType": "boolean",
+          "required": true,
+          "default": true,
+          "sensitivity": "low"
         },
         {
           "fieldId": "contact_email",
-          "label": "Contact email for notices",
+          "label": "Contact email for legal notices",
           "answerType": "text",
           "required": true,
-          "mapsTo": "{{contact_email}}"
+          "mapsTo": "{{contact_email}}",
+          "sensitivity": "low"
         }
       ]
     },
