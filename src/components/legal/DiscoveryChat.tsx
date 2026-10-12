@@ -37,7 +37,7 @@ export function DiscoveryChat({ onStart, opening }: { onStart: (id: string) => v
               {message.parts.map((part, i) => {
                 if (part.type === "text") return <MessageResponse key={i}>{part.text}</MessageResponse>;
                 if (part.type === "reasoning") return <details key={i} className="text-xs text-muted-foreground"><summary className="cursor-pointer">Thinking</summary><MessageResponse>{part.text}</MessageResponse></details>;
-                if (!isToolUIPart(part)) return null;
+                if (!isToolUIPart(part) || part.type === "dynamic-tool") return null;
                 const recommendations = part.state === "output-available" ? sanitizeRecommendations(part.output) : [];
                 return <div key={i} className="w-full">
                   <Tool defaultOpen={false} className="mb-3"><ToolHeader type={part.type} state={part.state} title="Finding documents" /><ToolContent><ToolInput input={part.input} />{part.state === "output-error" && <p className="text-sm text-destructive">{part.errorText}</p>}</ToolContent></Tool>
