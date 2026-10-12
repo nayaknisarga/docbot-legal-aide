@@ -49,15 +49,18 @@ async function callOnce(prompt: string): Promise<string> {
       failure = error;
     },
   });
-  const text = await result.text.catch((e) => {
+  let text: string;
+  try {
+    text = await result.text;
+  } catch (e) {
     throw friendly(failure ?? e);
-  });
+  }
   if (failure) throw friendly(failure);
   return text;
 }
 
 /** Validated JSON: one retry on malformed output, then null so callers use a safe default. */
-export async function askJson<T>(prompt: string, schema: z.ZodType<T>): Promise<T | null> {
+export async function askJson<S extends z.ZodTypeAny>(prompt: string, schema: S): Promise<z.output<S> | null> {
   for (let attempt = 0; attempt < 2; attempt++) {
     const text = await callOnce(attempt === 0 ? prompt : `${prompt}\n\nYour previous reply was not valid JSON for the required shape. Reply with JSON only.`);
     const parsed = parseModelJson(text, schema);

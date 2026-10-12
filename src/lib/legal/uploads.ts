@@ -76,7 +76,7 @@ export function splitClauses(raw: string): { heading: string; body: string }[] {
 }
 
 /** Parses model JSON (optionally fenced) against a schema; null when malformed. */
-export function parseModelJson<T>(text: string, schema: z.ZodType<T>): T | null {
+export function parseModelJson<S extends z.ZodTypeAny>(text: string, schema: S): z.output<S> | null {
   const m = text.match(/\{[\s\S]*\}/);
   if (!m) return null;
   try {
