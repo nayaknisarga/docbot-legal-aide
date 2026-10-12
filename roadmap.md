@@ -4,4 +4,4 @@
 - [x] Upload your own template (DOCX/PDF) with sign-in, AI clause review, add/remove proposals, approve/skip, red risk highlights.
 - [x] Match the homepage closely to the supplied screenshot and HTML reference.
 - [x] Research legal sources for requested clause changes without bypassing user approval.
-- [ ] Verify design and research-backed changes.
+- [x] Verify design and research-backed changes.
