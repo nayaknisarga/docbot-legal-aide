@@ -2,6 +2,6 @@
 - [x] Keep searchable category-grouped catalogue and existing document navigation.
 - [x] Test recommendation limits, catalogue filtering, chat and navigation.
 - [x] Upload your own template (DOCX/PDF) with sign-in, AI clause review, add/remove proposals, approve/skip, red risk highlights.
-- [ ] Refine homepage to match the screenshot with a compact composer and suggested prompts.
+- [ ] Match the homepage closely to the supplied screenshot and HTML reference.
 - [ ] Research legal sources for requested clause changes without bypassing user approval.
 - [ ] Verify design and research-backed changes.
