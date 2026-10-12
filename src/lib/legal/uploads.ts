@@ -126,6 +126,43 @@ export const RemovalSchema = z.object({
   indexes: z.array(z.number()),
 });
 
+const JurisdictionView = z.object({
+  verdict: z.string(),
+  explanation: z.string().optional().default(""),
+});
+export const LegalQuestionSchema = z.object({
+  answer: z.string().optional().default(""),
+  india: JurisdictionView,
+  us: JurisdictionView,
+  clarifying_question: z.string().optional().default(""),
+});
+
+const VERDICT_LABEL: Record<Verdict, string> = {
+  allowed: "✓ Likely allowed",
+  review: "◑ Flagged for legal review",
+  blocked: "✕ May be unenforceable or unlawful",
+};
+
+/** Turns a validated India/US answer into safe chat text. Unknown verdicts become "review". */
+export function formatLegalAnswer(
+  a: z.output<typeof LegalQuestionSchema>,
+  sources: LegalSource[],
+): string {
+  if (a.clarifying_question.trim()) return sanitizeWording(a.clarifying_question.trim());
+  const line = (name: string, v: { verdict: string; explanation: string }) =>
+    `**${name}: ${VERDICT_LABEL[normalizeVerdict(v.verdict, v.explanation).verdict]}**\n${v.explanation || "No clear answer from the sources — check with a lawyer."}`;
+  const parts = [
+    a.answer.trim(),
+    line("India", a.india),
+    line("United States", a.us),
+    sources.length
+      ? `Sources checked:\n${sources.map((s, i) => `${i + 1}. [${s.title}](${s.url})`).join("\n")}`
+      : "No reliable sources were found, so this answer is cautious.",
+    "_Suggestion only, not legal advice._",
+  ].filter(Boolean);
+  return sanitizeWording(parts.join("\n\n"));
+}
+
 /** Research results are untrusted data. Keep only valid public HTTP(S) links and compact excerpts. */
 export function sanitizeResearchSources(input: unknown): LegalSource[] {
   if (!Array.isArray(input)) return [];
