@@ -150,7 +150,7 @@ export function formatLegalAnswer(
 ): string {
   if (a.clarifying_question.trim()) return sanitizeWording(a.clarifying_question.trim());
   const line = (name: string, v: { verdict: string; explanation: string }) =>
-    `**${name}: ${VERDICT_LABEL[normalizeVerdict(v.verdict)]}**\n${v.explanation || "No clear answer from the sources — check with a lawyer."}`;
+    `**${name}: ${VERDICT_LABEL[normalizeVerdict(v.verdict, v.explanation).verdict]}**\n${v.explanation || "No clear answer from the sources — check with a lawyer."}`;
   const parts = [
     a.answer.trim(),
     line("India", a.india),
