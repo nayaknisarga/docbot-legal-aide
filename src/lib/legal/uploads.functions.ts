@@ -77,6 +77,7 @@ export const getTemplate = createServerFn({ method: "GET" })
       id: template.id as string,
       name: template.name as string,
       stage: template.stage as string,
+      jurisdiction: (template.jurisdiction ?? "") as string,
       summary: template.summary as string,
       messages: (template.messages ?? []) as ChatMessage[],
       clauses,
@@ -168,6 +169,21 @@ export const registerTemplate = createServerFn({ method: "POST" })
   });
 
 const NONE = /^\s*(none|no|nothing|nope|skip|n\/a)\.?\s*$/i;
+
+/** Sets the jurisdiction (country + state) every clause check runs against. */
+export const setTemplateJurisdiction = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: { id: string; jurisdiction: string }) =>
+    z.object({ id: z.string().uuid(), jurisdiction: z.string().max(120) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("uploaded_templates")
+      .update({ jurisdiction: data.jurisdiction.trim(), updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (error) throw new Error("Could not save the jurisdiction");
+    return { ok: true };
+  });
 
 export const sendTemplateMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
