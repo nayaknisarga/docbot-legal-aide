@@ -233,6 +233,7 @@ export type Database = {
           created_at: string
           file_path: string
           id: string
+          jurisdiction: string
           messages: Json
           mime_type: string
           name: string
@@ -246,6 +247,7 @@ export type Database = {
           created_at?: string
           file_path: string
           id?: string
+          jurisdiction?: string
           messages?: Json
           mime_type: string
           name: string
@@ -259,6 +261,7 @@ export type Database = {
           created_at?: string
           file_path?: string
           id?: string
+          jurisdiction?: string
           messages?: Json
           mime_type?: string
           name?: string
