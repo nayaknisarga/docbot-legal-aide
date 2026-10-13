@@ -12,7 +12,22 @@ import {
   decideTemplateClause,
   getTemplate,
   sendTemplateMessage,
+  setTemplateJurisdiction,
 } from "@/lib/legal/uploads.functions";
+
+const JURISDICTIONS = [
+  "India — All states",
+  "India — Maharashtra",
+  "India — Karnataka",
+  "India — Delhi",
+  "India — Tamil Nadu",
+  "United States — All states",
+  "United States — California",
+  "United States — New York",
+  "United States — Texas",
+  "United States — Delaware",
+  "United States — Florida",
+];
 import { isInDraft, type Clause } from "@/lib/legal/uploads";
 import { DISCLAIMER } from "@/lib/legal/defs";
 
@@ -44,6 +59,7 @@ function Workspace() {
   const fetchT = useServerFn(getTemplate);
   const send = useServerFn(sendTemplateMessage);
   const decide = useServerFn(decideTemplateClause);
+  const setJurisdiction = useServerFn(setTemplateJurisdiction);
   const [data, setData] = useState<Data | null>(null);
   const [input, setInput] = useState("");
   const [pendingText, setPendingText] = useState<string | null>(null);
