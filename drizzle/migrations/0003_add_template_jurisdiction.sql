@@ -1,0 +1,1 @@
+ALTER TABLE public.uploaded_templates ADD COLUMN IF NOT EXISTS jurisdiction TEXT NOT NULL DEFAULT '';
