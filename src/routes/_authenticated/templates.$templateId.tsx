@@ -136,6 +136,36 @@ function Workspace() {
               ← Your registered templates
             </Link>
             <h1 className="mt-1 truncate text-2xl text-primary">{data.name}</h1>
+            <label className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              Check clauses against:
+              <select
+                className="rounded-md border border-border bg-card px-2 py-1 text-xs text-foreground"
+                value={data.jurisdiction}
+                aria-label="Jurisdiction for clause checks"
+                onChange={async (e) => {
+                  try {
+                    await setJurisdiction({
+                      data: { id: templateId, jurisdiction: e.target.value },
+                    });
+                    await reload();
+                  } catch {
+                    toast.error("Couldn't save the jurisdiction.");
+                  }
+                }}
+              >
+                <option value="">Choose country / state…</option>
+                {JURISDICTIONS.map((j) => (
+                  <option key={j} value={j}>
+                    {j}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {!data.jurisdiction && (
+              <p className="mt-1 text-xs text-warning-foreground">
+                Pick a country and state so the assistant can say whether a clause is valid there.
+              </p>
+            )}
           </div>
           <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
             {data.messages.map((m, i) => (
