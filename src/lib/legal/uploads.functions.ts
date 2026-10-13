@@ -258,7 +258,10 @@ export const sendTemplateMessage = createServerFn({ method: "POST" })
     }
     const { askJson, researchClauseRequest } = await import("./uploads/ai.server");
     const active = draftClauses(clauses);
-    const sources = await researchClauseRequest(data.text);
+    const jur = ((template.jurisdiction as string) ?? "").trim();
+    const sources = await researchClauseRequest(
+      jur ? `${data.text} — law of ${jur}` : data.text,
+    );
     const researchContext = sources.length
       ? sources
           .map((source, i) => `[${i + 1}] ${source.title}\n${source.url}\n${source.excerpt}`)
